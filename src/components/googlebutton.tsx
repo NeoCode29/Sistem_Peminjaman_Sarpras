@@ -1,14 +1,9 @@
 'use client';
 
 const ButtonGoogleLogin = () => {
-  const handleLogin = () => {
-    // Redirect to another page instantly
-    window.location.href = 'http://192.168.1.6:3000/userpage'; // Replace with your target URL
-  };
 
   return (
     <button
-      onClick={handleLogin}
       className="flex items-center justify-center gap-2 border rounded px-4 py-2 mt-4 bg-blue-600 hover:bg-blue-400 transition w-full"
     >
       <img
