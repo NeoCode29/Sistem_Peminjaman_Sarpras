@@ -3,7 +3,7 @@ import Image from "next/image";
 
 export default function Header() {
   return (
-    <header className="w-full h-16 px-6 border-b border-gray-300 flex items-center justify-between  bg-white">
+    <header className="hover:bg-gray-100 w-full h-16 px-6 border-b border-gray-300 flex items-center justify-between  bg-white">
       {/* Left: Judul & Tanggal */}
       <div>
         <h1 className="text-lg font-semibold">Beranda</h1>
