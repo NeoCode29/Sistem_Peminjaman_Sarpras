@@ -90,11 +90,12 @@ export const ProfileService = {
 
             return {
                 id: user.id,
-                name: user.username || "",
+                name: user.name || "",
                 email: user.email || "",
                 nomor_hp: user.number_phone || "",
                 posisi: user.position || "",
                 jenis_kelamin: user.gender || "",
+                
                 mahasiswa: {
                     nim: mahasiswa?.nim || "",
                     jurusan: mahasiswa?.jurusan || "",
@@ -112,7 +113,7 @@ export const ProfileService = {
 
             return {
                 id: user.id,
-                name: user.username || "",
+                name: user.name || "",
                 email: user.email || "",
                 nomor_hp: user.number_phone || "",
                 posisi: user.position || "",
@@ -131,9 +132,10 @@ export const ProfileService = {
         const user = await prisma.user.update({
             where: { id: profile.id },
             data: {
-                username: profile.name,
+                name: profile.name,
                 email: profile.email,
                 number_phone: profile.nomor_hp,
+                role: "PEMINJAM",
                 position: profile.posisi,
                 gender: profile.jenis_kelamin,
             }

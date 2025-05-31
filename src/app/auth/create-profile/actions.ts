@@ -23,11 +23,8 @@ const pegawaiSchema = z.object({
     unit_pegawai: z.string().min(1, "Unit pegawai harus diisi"),
 });
 
-
-
 export async function createProfile( profileParams: Profile) {
 
-  
   let finalSchema = baseProfileSchema;
 
   if (profileParams.posisi === "mahasiswa") {
@@ -62,7 +59,6 @@ export async function createProfile( profileParams: Profile) {
       } : {})
   };
 
-  console.log(dataToValidate)
 
   const validatedData = finalSchema.safeParse(dataToValidate);
   if (!validatedData.success) {

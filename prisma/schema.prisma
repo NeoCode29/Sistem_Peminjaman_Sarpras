@@ -13,25 +13,31 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum UserRole {
+  ADMIN
+  PEMINJAM
+}
 
- 
 model User {
   id            String          @id @default(cuid())
   name          String?
-  username      String?         @unique
   email         String?         @unique
   emailVerified DateTime?
   image         String?
-  accounts      Account[]
-  sessions      Session[]
-  // Optional for WebAuthn support
-  Authenticator Authenticator[]
+  role          UserRole        @default(PEMINJAM)
+  mahasiswa     Mahasiswa?
+  pegawai       Pegawai?
+
   position      String?
   gender        String?
   number_phone  String?
- 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+
+  // Relations
+  accounts      Account[]
+  sessions      Session[]
+
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
 }
 
 model Mahasiswa {
@@ -40,6 +46,7 @@ model Mahasiswa {
   nim String?
   jurusan String?
   prodi String?
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Pegawai {
@@ -47,11 +54,12 @@ model Pegawai {
   userId String @unique
   nik String?
   unit_pegawai String?
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
- 
+
 model Account {
   id                       String  @id @default(cuid())
-  userId                   String  @unique
+  userId                   String
   type                     String
   provider                 String
   providerAccountId        String
@@ -63,48 +71,32 @@ model Account {
   id_token                 String? @db.Text
   session_state            String?
   refresh_token_expires_in Int?
-  user                     User?   @relation(fields: [userId], references: [id])
- 
+  user                     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
- 
+
   @@unique([provider, providerAccountId])
   @@index([userId])
 }
- 
+
 model Session {
   id           String   @id @default(cuid())
   sessionToken String   @unique
   userId       String
   expires      DateTime
-  user         User     @relation(fields: [userId], references: [id])
- 
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
- 
+
   @@index([userId])
 }
- 
+
 model VerificationToken {
   identifier String
   token      String
   expires    DateTime
- 
+
   @@unique([identifier, token])
-}
- 
-// Optional for WebAuthn support
-model Authenticator {
-  credentialID         String  @unique
-  userId               String
-  providerAccountId    String
-  credentialPublicKey  String
-  counter              Int
-  credentialDeviceType String
-  credentialBackedUp   Boolean
-  transports           String?
- 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
- 
-  @@id([userId, credentialID])
 }
