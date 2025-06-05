@@ -6,62 +6,30 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarTrigger,
 } from "@/components/ui/sidebar"
-import { 
-  Home, 
-  Database, 
-  CalendarRange, 
-  FileText, 
-  Settings,
-  LogOut 
-} from "lucide-react"
+import { LogOut } from "lucide-react"
 import Image from 'next/image'
 import Link from 'next/link'
+import { menuConfig } from '@/config/menu'
+import { UserRole } from '@prisma/client'
 
 interface AppSidebarProps {
-  role?: 'admin' | 'peminjam'
+  role?: UserRole
 }
 
-export function AppSidebar({ role = 'peminjam' }: AppSidebarProps) {
-  const menuItems = [
-    {
-      title: "Beranda",
-      icon: Home,
-      href: role === 'admin' ? '/admin' : '/',
-    },
-    {
-      title: "Master Data",
-      icon: Database,
-      href: role === 'admin' ? '/admin/master-data' : '/master-data',
-    },
-    {
-      title: "Peminjaman",
-      icon: CalendarRange,
-      href: role === 'admin' ? '/admin/peminjaman' : '/peminjaman',
-    },
-    {
-      title: "Laporan",
-      icon: FileText,
-      href: role === 'admin' ? '/admin/laporan' : '/laporan',
-    },
-    {
-      title: "Pengaturan",
-      icon: Settings,
-      href: role === 'admin' ? '/admin/pengaturan' : '/pengaturan',
-    },
-  ]
+export function AppSidebar({ role = 'PEMINJAM' }: AppSidebarProps) {
+  // Get menu items based on role
+  const menuItems = role === 'ADMIN' ? menuConfig.admin : menuConfig.peminjam;
 
   return (
-    <Sidebar className="border-r">
+    <Sidebar className="border-r bg-white">
       <SidebarHeader className="border-b px-6 py-3">
         <div className="flex flex-col items-center gap-2">
           <Image 
-            src="/logo.png" 
+            src="/logo-poliwangi.png" 
             alt="Logo" 
             width={60} 
             height={60}
-            className="rounded-full"
           />
           <h1 className="font-semibold text-center">
             SARPRAS
@@ -71,7 +39,7 @@ export function AppSidebar({ role = 'peminjam' }: AppSidebarProps) {
         </div>
       </SidebarHeader>
       <SidebarContent>
-        <SidebarMenu>
+        <SidebarMenu className='p-2 gap-2'>
           {menuItems.map((item) => (
             <SidebarMenuItem key={item.title}>
               <SidebarMenuButton asChild>
@@ -85,7 +53,7 @@ export function AppSidebar({ role = 'peminjam' }: AppSidebarProps) {
           {/* Logout button at the bottom */}
           <SidebarMenuItem className="mt-auto">
             <SidebarMenuButton asChild>
-              <Link href="/logout" className="flex items-center gap-3 text-red-600">
+              <Link href="/auth/signout" className="flex items-center gap-3 text-red-600">
                 <LogOut className="h-4 w-4" />
                 <span>Keluar</span>
               </Link>

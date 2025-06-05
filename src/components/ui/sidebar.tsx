@@ -4,11 +4,7 @@ import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { VariantProps, cva } from "class-variance-authority"
 import { PanelLeftIcon } from "lucide-react"
-<<<<<<< HEAD
-import { AlignJustifyIcon } from "lucide-react"
-=======
->>>>>>> 7a93807 (setup role)
-
+import { AlignJustifyIcon, PanelRightIcon } from "lucide-react"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -174,7 +170,7 @@ function Sidebar({
       <div
         data-slot="sidebar"
         className={cn(
-          "bg-sidebar text-sidebar-foreground flex h-full w-(--sidebar-width) flex-col",
+          "bg-white text-sidebar-foreground flex h-full w-(--sidebar-width) flex-col",
           className
         )}
         {...props}
@@ -270,24 +266,15 @@ function SidebarTrigger({
       data-slot="sidebar-trigger"
       variant="ghost"
       size="icon"
-<<<<<<< HEAD
       className={cn("size-12", className,)}
-=======
-      className={cn("size-7", className)}
->>>>>>> 7a93807 (setup role)
       onClick={(event) => {
         onClick?.(event)
         toggleSidebar()
       }}
       {...props}
     >
-<<<<<<< HEAD
-      <AlignJustifyIcon className="size-12"/>
+      <PanelRightIcon className="size-4"/>
       <span className="sr-only font-semibold">Toggle Sidebar</span>
-=======
-      <PanelLeftIcon />
-      <span className="sr-only">Toggle Sidebar</span>
->>>>>>> 7a93807 (setup role)
     </Button>
   )
 }

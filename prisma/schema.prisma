@@ -100,3 +100,70 @@ model VerificationToken {
 
   @@unique([identifier, token])
 }
+
+model KategoriSarana {
+  id        String   @id @default(cuid())
+  nama      String   @unique
+  deskripsi String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  sarana    Sarana[]
+}
+
+model Satuan {
+  id        String   @id @default(cuid())
+  nama      String   @unique
+  singkatan String   @unique
+  deskripsi String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  sarana    Sarana[]
+}
+
+// Membuat model untuk tabel Sarana
+
+model Sarana {
+  id             String            @id @default(cuid())
+  nama           String
+  kategori       String
+  satuan         String
+  jenis          JenisBarang       // BERNOMOR atau TIDAK_BERNOMOR
+  stok           Int               @default(0) // untuk barang TIDAK_BERNOMOR
+  total_stok     Int               @default(0)
+  satuanSatuan   Satuan            @relation(fields: [satuan], references: [id])
+  kategoriSarana KategoriSarana    @relation(fields: [kategori], references: [id])
+  detailSarana   DetailSarana[]    // untuk barang BERNOMOR
+  lokasi         String?
+  image_url      String?
+  
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+}
+
+model DetailSarana {
+  id          String              @id @default(cuid())
+  saranaId    String
+  nomer_seri  String?
+  status      StatusPeminjaman    @default(TERSEDIA)
+  lokasi      String?
+  sarana      Sarana              @relation(fields: [saranaId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+
+  @@index([saranaId])
+}
+
+enum StatusPeminjaman {
+  DIPINJAM
+  TERSEDIA
+}
+
+enum JenisBarang {
+  BERNOMOR      
+  TIDAK_BERNOMOR
+}
+
+
+
+

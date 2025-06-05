@@ -1,4 +1,4 @@
-import Header from "@/components/header";
+import Header from "@/components/AppHeader";
 import Sidebar from "@/components/sidebar";
 import Cardacara from "@/components/cardacara";
 import CardLogin from "@/components/CardLogin";
