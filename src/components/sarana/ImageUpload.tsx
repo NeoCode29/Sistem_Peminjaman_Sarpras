@@ -6,12 +6,15 @@ import { ImageIcon, Loader2, TrashIcon, UploadIcon } from "lucide-react"
 import Image from "next/image"
 import { useCallback, useState } from "react"
 import { toast } from "sonner"
+import { cn } from "@/lib/utils"
 
 interface ImageUploadProps {
   value?: string
   onChange?: (url: string) => void
   onRemove?: () => void
   disabled?: boolean
+  className?: string
+  aspectRatio?: "square" | "video" | "portrait"
 }
 
 export function ImageUpload({
@@ -19,6 +22,8 @@ export function ImageUpload({
   onChange,
   onRemove,
   disabled,
+  className,
+  aspectRatio = "square",
 }: ImageUploadProps) {
   const [isUploading, setIsUploading] = useState(false)
 
@@ -114,12 +119,21 @@ export function ImageUpload({
     [disabled, onRemove, value]
   )
 
+  const aspectRatioClass = {
+    square: "aspect-square",
+    video: "aspect-video",
+    portrait: "aspect-[3/4]",
+  }
+
   return (
     <div
       onClick={() => document.getElementById("imageUpload")?.click()}
       onDragOver={(e) => e.preventDefault()}
       onDrop={handleDrop}
-      className="relative flex cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border border-dashed p-6 transition-colors hover:bg-accent/5"
+      className={cn(
+        "relative flex cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border border-dashed transition-colors hover:bg-accent/5",
+        className
+      )}
     >
       <input
         id="imageUpload"
@@ -132,27 +146,33 @@ export function ImageUpload({
 
       {value ? (
         // Image preview
-        <div className="relative aspect-video w-full overflow-hidden rounded-lg">
+        <div className={cn(
+          "relative w-full overflow-hidden rounded-lg",
+          aspectRatioClass[aspectRatio]
+        )}>
           <Image
             src={value}
             alt="Upload preview"
             fill
             className="object-cover"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
-          <Button
-            type="button"
-            variant="destructive"
-            size="icon"
-            className="absolute right-2 top-2"
-            onClick={handleRemove}
-            disabled={disabled || isUploading}
-          >
-            <TrashIcon className="h-4 w-4" />
-          </Button>
+          <div className="absolute inset-0 bg-black/50 opacity-0 transition-opacity hover:opacity-100">
+            <Button
+              type="button"
+              variant="destructive"
+              size="icon"
+              className="absolute right-2 top-2"
+              onClick={handleRemove}
+              disabled={disabled || isUploading}
+            >
+              <TrashIcon className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
       ) : isUploading ? (
         // Loading state
-        <div className="flex flex-col items-center gap-2">
+        <div className="flex flex-col items-center gap-2 p-4">
           <Loader2 className="h-10 w-10 animate-spin text-muted-foreground" />
           <p className="text-sm text-muted-foreground">
             Mengunggah gambar...
@@ -160,13 +180,9 @@ export function ImageUpload({
         </div>
       ) : (
         // Upload prompt
-        <>
+        <div className="flex flex-col items-center gap-2 p-4">
           <div className="rounded-full bg-accent/10 p-4">
-            {value ? (
-              <ImageIcon className="h-6 w-6 text-muted-foreground" />
-            ) : (
-              <UploadIcon className="h-6 w-6 text-muted-foreground" />
-            )}
+            <UploadIcon className="h-6 w-6 text-muted-foreground" />
           </div>
           <p className="text-sm font-medium">
             Klik atau seret & lepas untuk mengunggah
@@ -174,7 +190,7 @@ export function ImageUpload({
           <p className="text-xs text-muted-foreground">
             Ukuran file maksimal: 5MB
           </p>
-        </>
+        </div>
       )}
     </div>
   )

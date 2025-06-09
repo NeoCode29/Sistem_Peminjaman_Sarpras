@@ -1,9 +1,8 @@
-'use client'
+"use client"
 
 import React from 'react';
 import Image from 'next/image';
-import { FcGoogle } from 'react-icons/fc';
-import { signInWithGoogle } from '@/service/authService';
+import { GoogleSignInButton } from './GoogleSignInButton';
 
 const CardLogin: React.FC = () => {
   return (
@@ -26,13 +25,7 @@ const CardLogin: React.FC = () => {
                 Sarana &amp; Prasarana
             </p>
         
-            <button
-                className="flex items-center justify-center w-full py-3 px-4 border border-gray-400 rounded-md shadow-sm bg-white hover:bg-gray-50 transition-colors"
-                onClick={() => signInWithGoogle()}
-            >
-                <FcGoogle className="w-5 h-5 mr-2" />
-                <span>Melanjutkan dengan Google</span>
-            </button>
+      <GoogleSignInButton className="w-full" />
         </div>
   );
 };

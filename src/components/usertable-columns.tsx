@@ -13,7 +13,7 @@ export function createUserColumns(
   return [
     {
       accessorKey: "name",
-      header: "Nama",
+    header: "Nama",
       cell: ({ row }) => {
         const user = row.original;
         return (
@@ -50,9 +50,9 @@ export function createUserColumns(
           </div>
         );
       },
-    },
-    {
-      accessorKey: "role",
+  },
+  {
+    accessorKey: "role",
       header: "Peran",
       cell: ({ row }) => {
         const role = row.getValue("role") as UserRole;
@@ -74,18 +74,18 @@ export function createUserColumns(
           {row.getValue("number_phone") || "Tidak ada"}
         </span>
       ),
-    },
-    {
-      id: "actions",
-      cell: ({ row }) => {
-        return (
+  },
+  {
+    id: "actions",
+    cell: ({ row }) => {
+      return (
           <Button
             variant="ghost"
             onClick={() => onEditRole(row.original)}
             className="min-w-[100px]"
           >
             Ubah Peran
-          </Button>
+            </Button>
         );
       },
     },

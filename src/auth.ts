@@ -1,8 +1,11 @@
-import NextAuth from "next-auth"
+import NextAuth, { type DefaultSession, type NextAuthConfig } from "next-auth"
 import { PrismaAdapter } from "@auth/prisma-adapter"
 import Google from "next-auth/providers/google"
 import { prisma } from "./lib/prisma"
 import { UserRole } from "@prisma/client"
+import type { Account, Profile, User } from "next-auth"
+import type { AdapterUser } from "@auth/core/adapters"
+import type { JWT } from "next-auth/jwt"
 
 declare module "next-auth" {
   interface Session {
@@ -23,7 +26,7 @@ declare module "next-auth/jwt" {
   }
 }
 
-export const { handlers, auth, signIn, signOut } = NextAuth({
+export const config: NextAuthConfig = {
   adapter: PrismaAdapter(prisma),
   providers: [
     Google({
@@ -32,7 +35,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     })
   ],
   pages: {
-    signIn: "/auth/signin"
+    signIn: "/auth/signin",
+    error: "/auth/error"
   },
   session: {
     strategy: "jwt",
@@ -40,34 +44,92 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     updateAge: 24 * 60 * 60, // 24 hours
   },
   callbacks: {
-    async signIn({ user, account }) {
+    async signIn(params: { 
+      user: User | AdapterUser; 
+      account?: Account | null; 
+      profile?: Profile; 
+      email?: { verificationRequest?: boolean }; 
+      credentials?: Record<string, unknown>; 
+    }) {
+      const { user, account } = params;
+      if (!account || !user.email) return false;
+
       try {
-        if (account?.provider === "google" && user.email) {
+        // Check if user exists with this email
           const existingUser = await prisma.user.findUnique({
             where: { email: user.email },
-            select: { id: true, role: true }
+          include: { accounts: true }
           });
 
-          if (!existingUser) {
-            const newUser = await prisma.user.create({
+          if (existingUser) {
+          // If this is a Google sign in
+          if (account.provider === "google") {
+            // Check if they already have a Google account linked
+            const existingGoogleAccount = existingUser.accounts.find(
+              (acc) => acc.provider === "google"
+            );
+
+            if (!existingGoogleAccount) {
+              // If no Google account is linked, link this one
+              await prisma.account.create({
+                data: {
+                  userId: existingUser.id,
+                  type: account.type,
+                  provider: account.provider,
+                  providerAccountId: account.providerAccountId,
+                  access_token: account.access_token,
+                  expires_at: account.expires_at,
+                  token_type: account.token_type,
+                  scope: account.scope,
+                  id_token: account.id_token,
+                  session_state: account.session_state as string | null
+                },
+              });
+            }
+          }
+          
+          // Update user info
+          await prisma.user.update({
+            where: { id: existingUser.id },
               data: {
-                email: user.email,
-                name: user.name || "",
+              name: user.name,
                 image: user.image,
-                role: "PEMINJAM"
               },
             });
-            user.role = newUser.role;
-          } else {
-            user.role = existingUser.role;
+
+          return true;
+        }
+
+        // If no user exists, create a new one
+        await prisma.user.create({
+          data: {
+            email: user.email,
+            name: user.name,
+            image: user.image,
+            role: "PEMINJAM",
+            accounts: {
+              create: {
+                type: account.type,
+                provider: account.provider,
+                providerAccountId: account.providerAccountId,
+                access_token: account.access_token,
+                expires_at: account.expires_at,
+                token_type: account.token_type,
+                scope: account.scope,
+                id_token: account.id_token,
+                session_state: account.session_state as string | null
           }
         }
+          },
+        });
+
         return true;
       } catch (error) {
         console.error("SignIn error:", error);
         return false;
       }
     },
+
     async jwt({ token, user, trigger, session }) {
       if (trigger === "signIn" && user) {
         token.role = user.role;
@@ -85,13 +147,20 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
       return token;
     },
-    async session({ session, token }) {
+
+    async session({ session, token }: { session: DefaultSession, token: JWT }) {
       if (token && token.sub && token.email) {
-        session.user.id = token.sub;
-        session.user.role = token.role || "PEMINJAM";
-        session.user.email = token.email;
+        session.user = {
+          id: token.sub,
+          role: token.role || "PEMINJAM",
+          email: token.email,
+          name: session.user?.name,
+          image: session.user?.image
+        };
       }
       return session;
     }
   }
-})
+}
+
+export const { handlers, auth, signIn, signOut } = NextAuth(config)

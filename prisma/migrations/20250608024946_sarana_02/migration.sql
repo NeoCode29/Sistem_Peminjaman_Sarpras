@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `Sarana` ADD COLUMN `total_stok` INTEGER NOT NULL DEFAULT 0;

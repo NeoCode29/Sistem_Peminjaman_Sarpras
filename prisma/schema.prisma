@@ -114,7 +114,6 @@ model Satuan {
   id        String   @id @default(cuid())
   nama      String   @unique
   singkatan String   @unique
-  deskripsi String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   sarana    Sarana[]
@@ -125,13 +124,14 @@ model Satuan {
 model Sarana {
   id             String            @id @default(cuid())
   nama           String
-  kategori       String
-  satuan         String
-  jenis          JenisBarang       // BERNOMOR atau TIDAK_BERNOMOR
-  stok           Int               @default(0) // untuk barang TIDAK_BERNOMOR
-  total_stok     Int               @default(0)
-  satuanSatuan   Satuan            @relation(fields: [satuan], references: [id])
-  kategoriSarana KategoriSarana    @relation(fields: [kategori], references: [id])
+  kategoriId       String
+  satuanId         String
+  jenis          JenisBarang       
+  stok           Int               @default(0) 
+  sisa           Int               @default(0)
+  status         StatusSarpras      @default(TERSEDIA)
+  satuanSatuan   Satuan            @relation(fields: [satuanId], references: [id])
+  kategoriSarana KategoriSarana    @relation(fields: [kategoriId], references: [id])
   detailSarana   DetailSarana[]    // untuk barang BERNOMOR
   lokasi         String?
   image_url      String?
@@ -144,7 +144,7 @@ model DetailSarana {
   id          String              @id @default(cuid())
   saranaId    String
   nomer_seri  String?
-  status      StatusPeminjaman    @default(TERSEDIA)
+  status      StatusSarpras    @default(TERSEDIA)
   lokasi      String?
   sarana      Sarana              @relation(fields: [saranaId], references: [id], onDelete: Cascade)
 
@@ -154,9 +154,11 @@ model DetailSarana {
   @@index([saranaId])
 }
 
-enum StatusPeminjaman {
+enum StatusSarpras {
   DIPINJAM
   TERSEDIA
+  HILANG
+  RUSAK
 }
 
 enum JenisBarang {
@@ -164,6 +166,25 @@ enum JenisBarang {
   TIDAK_BERNOMOR
 }
 
+// Membuat model untuk tabel prasarana
+
+model Prasarana {
+  id String @id @default(cuid())
+  nama String
+  lokasi String?
+  kapasitas Int?
+  deskripsi String?
+  status StatusSarpras @default(TERSEDIA)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  image_url ImagePrasarana[]
+}
 
 
-
+model ImagePrasarana {
+  id String @id @default(cuid())
+  prasaranaId String
+  image_url String
+  prasarana Prasarana @relation(fields: [prasaranaId], references: [id], onDelete: Cascade)
+}

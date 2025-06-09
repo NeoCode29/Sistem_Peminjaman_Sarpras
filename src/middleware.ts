@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 
 // Paths that require authentication
-const PROTECTED_PATHS = [ "/profile", "/peminjaman", "/pengembalian"];
+const PROTECTED_PATHS = ["/profile", "/peminjaman", "/pengembalian"];
 
 // Paths that require admin role
 const ADMIN_PATHS = ["/admin"];
@@ -11,7 +11,7 @@ const ADMIN_PATHS = ["/admin"];
 const PEMINJAM_PATHS = ["/peminjam"];
 
 // Public paths that don't require authentication
-const PUBLIC_PATHS = ["/auth/signin", "/api/auth"];
+const PUBLIC_PATHS = ["/auth/signin", "/api/auth", "/api/profile/check"];
 
 export default auth(async (req) => {
   const { pathname } = req.nextUrl;
@@ -51,8 +51,10 @@ export default auth(async (req) => {
     return Response.redirect(new URL("/unauthorized", req.url));
   }
 
-  // Profile completion check
-  if (session.user?.id && !pathname.startsWith("/auth/create-profile")) {
+  // Profile completion check - only for specific paths
+  if (session.user?.id && 
+      !pathname.startsWith("/auth/create-profile") && 
+      (pathname.startsWith("/admin") || pathname.startsWith("/peminjam"))) {
     try {
       const baseUrl = process.env.NEXT_PUBLIC_APP_URL || req.nextUrl.origin;
       const response = await fetch(`${baseUrl}/api/profile/check?userId=${session.user.id}`);

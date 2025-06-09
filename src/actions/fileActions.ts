@@ -152,4 +152,101 @@ export async function deleteSaranaImage(fileUrl: string) {
     }
     throw new Error(`Failed to delete sarana image: ${error.message}`)
   }
+}
+
+export async function uploadPrasaranaImage(file: File): Promise<string> {
+  try {
+    // Validate file
+    if (!file) {
+      throw new Error("No file provided")
+    }
+
+    if (!file.type.startsWith("image/")) {
+      throw new Error("File must be an image")
+    }
+
+    // Get or create prasarana folder
+    const prasaranaFolderId = await createFolderIfNotExists("prasarana")
+
+    // Convert File to Buffer
+    const arrayBuffer = await file.arrayBuffer()
+    const buffer = Buffer.from(arrayBuffer)
+
+    // Create readable stream from buffer
+    const stream = new Readable()
+    stream.push(buffer)
+    stream.push(null)
+
+    // Get file extension
+    const ext = path.extname(file.name)
+
+    // Create file metadata
+    const fileMetadata = {
+      name: `prasarana_${Date.now()}${ext}`,
+      parents: [prasaranaFolderId],
+    }
+
+    // Create media
+    const media = {
+      mimeType: file.type,
+      body: stream,
+    }
+
+    // Upload file
+    const response = await drive.files.create({
+      requestBody: fileMetadata,
+      media: media,
+      fields: "id",
+    })
+
+    if (!response.data.id) {
+      throw new Error("Failed to upload file: No ID returned")
+    }
+
+    // Make file publicly accessible
+    await drive.permissions.create({
+      fileId: response.data.id,
+      requestBody: {
+        role: "reader",
+        type: "anyone",
+      },
+    })
+
+    // Return direct image URL
+    return `https://drive.google.com/uc?id=${response.data.id}`
+  } catch (error: any) {
+    console.error("Error uploading prasarana image:", error)
+    if (error.message.includes("invalid_grant")) {
+      throw new Error("Google Drive authentication failed. Please check your credentials.")
+    }
+    throw new Error(`Failed to upload prasarana image: ${error.message}`)
+  }
+}
+
+export async function deletePrasaranaImage(fileUrl: string) {
+  try {
+    if (!fileUrl) {
+      throw new Error("No file URL provided")
+    }
+
+    // Extract file ID from URL
+    const matches = fileUrl.match(/id=([-\w]+)/) || fileUrl.match(/[-\w]{25,}/)
+    if (!matches) {
+      throw new Error("Invalid Google Drive URL")
+    }
+    const fileId = matches[1] || matches[0]
+
+    // Delete file
+    await drive.files.delete({
+      fileId,
+    })
+
+    return true
+  } catch (error: any) {
+    console.error("Error deleting prasarana image:", error)
+    if (error.message.includes("invalid_grant")) {
+      throw new Error("Google Drive authentication failed. Please check your credentials.")
+    }
+    throw new Error(`Failed to delete prasarana image: ${error.message}`)
+  }
 } 

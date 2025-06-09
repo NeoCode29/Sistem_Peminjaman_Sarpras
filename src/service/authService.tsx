@@ -1,7 +1,13 @@
-"use server"
+"use client"
 
-import { signIn } from "@/auth"
+import { signIn } from "next-auth/react"
 
 export async function signInWithGoogle() {
-    await signIn("google",{redirectTo: "/dashboard"})
+    try {
+        await signIn("google", { 
+            callbackUrl: "/dashboard"
+        })
+    } catch (error) {
+        console.error("Error signing in with Google:", error)
+    }
 }

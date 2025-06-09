@@ -1,36 +1,86 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Sarpras Management System
+
+## Prerequisites
+
+Before you begin, ensure you have the following installed:
+- Node.js (version 14.0 or higher)
+- npm (Node Package Manager)
+- PostgreSQL database
 
 ## Getting Started
 
-First, run the development server:
+Follow these steps to set up and run the project:
+
+### 1. Installation
+
+Install all project dependencies by running:
+
+```bash
+npm install
+```
+
+### 2. Environment Setup
+
+Create your environment configuration file:
+
+```bash
+cp .env.example .env
+```
+
+Open the `.env` file and configure the following variables:
+- `DATABASE_URL`: Your PostgreSQL database connection string
+- [Add other important environment variables here]
+
+### 3. Database Setup
+
+Run database migrations to create the required tables:
+
+```bash
+npx prisma migrate dev
+```
+
+### 4. Seed Initial Data
+
+Populate the database with initial seed data:
+
+```bash
+npm run seed
+```
+
+### 5. Start Development Server
+
+Launch the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The application will be available at `http://localhost:3000`
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Available Scripts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- `npm run dev` - Start development server
+- `npm run build` - Build the application for production
+- `npm start` - Start production server
+- `npm run seed` - Run database seeder
 
-## Learn More
+## Project Structure
 
-To learn more about Next.js, take a look at the following resources:
+```
+sarpras/
+├── prisma/          # Database schema and migrations
+├── public/          # Static files
+├── src/             # Source code
+│   ├── app/        # Next.js app directory
+│   ├── components/ # React components
+│   └── lib/        # Utility functions
+└── ...
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Contributing
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+[Add contribution guidelines here]
 
-## Deploy on Vercel
+## License
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+[Add license information here]
