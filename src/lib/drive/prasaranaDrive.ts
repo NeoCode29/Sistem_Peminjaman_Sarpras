@@ -1,7 +1,7 @@
 import { google } from 'googleapis';
 import { Readable } from 'stream';
 import { env } from '@/env.mjs';
-import { validateImage } from '../utils/image-validation';
+// import { validateImage } from '../utils/image-validation';
 import { DriveUploadResult, DriveError } from './types';
 
 // Initialize Google Drive API
@@ -106,27 +106,28 @@ export async function uploadImage(file: File): Promise<DriveUploadResult> {
     console.log("[prasaranaDrive] Upload completed successfully:", result);
 
     return result;
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("[prasaranaDrive] Upload error details:", {
       error: error,
-      message: error.message,
-      code: error.code,
-      stack: error.stack,
+      message: error instanceof Error ? error.message : 'Unknown error',
+      code: (error as { code?: string }).code,
+      stack: error instanceof Error ? error.stack : undefined,
     });
 
     // Check if error is from Google Drive API
-    if (error.response) {
+    if (error && typeof error === 'object' && 'response' in error) {
+      const apiError = error as { response: { status: number; statusText: string; data: unknown } };
       console.error("[prasaranaDrive] Google Drive API error response:", {
-        status: error.response.status,
-        statusText: error.response.statusText,
-        data: error.response.data,
+        status: apiError.response.status,
+        statusText: apiError.response.statusText,
+        data: apiError.response.data,
       });
     }
 
     const driveError = new Error(
       error instanceof Error ? error.message : "Failed to upload image"
     ) as DriveError;
-    driveError.code = error.code || "UNKNOWN_ERROR";
+    driveError.code = (error as { code?: string }).code || "UNKNOWN_ERROR";
     driveError.details = error;
     throw driveError;
   }
@@ -149,25 +150,27 @@ export async function deleteFile(fileId: string): Promise<void> {
     console.log("[prasaranaDrive] Attempting to delete file");
     await drive.files.delete({ fileId });
     console.log("[prasaranaDrive] File deleted successfully");
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("[prasaranaDrive] Delete error details:", {
       error: error,
-      message: error.message,
-      code: error.code,
-      stack: error.stack,
+      message: error instanceof Error ? error.message : 'Unknown error',
+      code: (error as { code?: string }).code,
+      stack: error instanceof Error ? error.stack : undefined,
     });
 
     // Check if error is from Google Drive API
-    if (error.response) {
+    if (error && typeof error === 'object' && 'response' in error) {
+      const apiError = error as { response: { status: number; statusText: string; data: unknown } };
       console.error("[prasaranaDrive] Google Drive API error response:", {
-        status: error.response.status,
-        statusText: error.response.statusText,
-        data: error.response.data,
+        status: apiError.response.status,
+        statusText: apiError.response.statusText,
+        data: apiError.response.data,
       });
     }
 
-    const driveError = new Error(`Failed to delete prasarana image: ${error.message}`) as DriveError;
-    driveError.code = error.code || 'UNKNOWN_ERROR';
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    const driveError = new Error(`Failed to delete prasarana image: ${errorMessage}`) as DriveError;
+    driveError.code = (error as { code?: string }).code || 'UNKNOWN_ERROR';
     driveError.details = error;
     throw driveError;
   }

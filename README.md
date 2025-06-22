@@ -84,3 +84,44 @@ sarpras/
 ## License
 
 [Add license information here]
+
+## Fitur Sistem Peminjaman Sarana dan Prasarana
+
+### 🔄 Fitur Pengembalian Barang
+
+Sistem telah diperbaharui dengan logika pengembalian yang lebih fleksibel dan user-friendly:
+
+#### ✅ Kondisi Pengembalian
+- **Peminjam dapat melakukan checklist pengembalian** setelah melakukan pengambilan (`status_pengambilan = SUDAH_MENGAMBIL`)
+- **Pengembalian diizinkan kapan saja** setelah pengambilan - **TIDAK** harus menunggu sampai acara selesai
+- **Validasi otomatis** memastikan hanya item yang sudah diambil yang bisa dikembalikan
+
+#### ⏰ Logika Waktu Pengembalian
+1. **Syarat Utama**: Peminjam harus sudah mengambil barang terlebih dahulu
+2. **Fleksibilitas Waktu**: Checklist pengembalian bisa dilakukan kapan saja setelah pengambilan
+3. **Peringatan Sistem**: Jika pengembalian dilakukan jauh sebelum jadwal, sistem akan memberikan log peringatan (tapi tetap mengizinkan)
+
+#### 📋 Checklist Pengembalian
+- **Interface Interaktif**: Dialog checklist yang user-friendly
+- **Validasi Real-time**: Tombol submit diaktifkan setelah pengambilan
+- **Informasi Jelas**: Menampilkan status pengambilan dan pengembalian
+- **Fleksibilitas**: Peminjam tidak perlu menunggu sampai acara selesai
+
+#### 🔧 Implementasi Teknis
+- Validasi di level service mengutamakan status pengambilan
+- Validasi tanggal hanya memberikan peringatan, tidak memblokir
+- Komponen UI menampilkan pesan yang sesuai dengan kondisi
+- Error handling yang informatif
+
+### Contoh Alur Pengembalian yang Diperbaharui:
+1. Peminjam mengambil barang ✅
+2. **Peminjam langsung bisa melakukan checklist pengembalian** 📋
+3. Acara dilaksanakan 🎯
+4. Peminjam mengembalikan barang (kapan saja) ✅
+5. Admin memvalidasi pengembalian ✅
+
+### 🆕 **Perubahan Penting:**
+- **SEBELUM**: Checklist pengembalian hanya bisa dilakukan setelah tanggal acara berakhir
+- **SEKARANG**: Checklist pengembalian bisa dilakukan kapan saja setelah pengambilan barang
+
+**Jawaban untuk pertanyaan Anda**: Ya, dialog checklist pengembalian **tidak lagi terikat tanggal acara berakhir**. Peminjam dapat melakukan checklist pengembalian **segera setelah pengambilan** tanpa harus menunggu acara selesai. Ini memberikan fleksibilitas yang lebih baik untuk peminjam yang ingin mengembalikan barang lebih awal.

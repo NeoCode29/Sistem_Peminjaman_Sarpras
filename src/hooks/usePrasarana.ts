@@ -8,7 +8,7 @@ import { z } from "zod";
 import { StatusSarpras } from "@prisma/client";
 import {
   getAllPrasarana,
-  getPrasaranaById,
+
   createPrasarana,
   updatePrasarana,
   deletePrasarana,
@@ -35,7 +35,7 @@ export function usePrasarana() {
         setError(result.message);
         toast.error(result.message);
       }
-    } catch (err) {
+    } catch {
       const message = "Gagal mengambil data prasarana";
       setError(message);
       toast.error(message);
@@ -84,10 +84,10 @@ export function usePrasarana() {
         toast.error("Error", { description: result.message });
         return false;
       }
-    } catch (err) {
-      console.error("[usePrasarana] Create error:", err);
+    } catch (error) {
+      console.error("[usePrasarana] Create error:", error);
       toast.error("Error", { 
-        description: err instanceof Error ? err.message : "Gagal membuat prasarana" 
+        description: error instanceof Error ? error.message : "Gagal membuat prasarana" 
       });
       return false;
     } finally {
@@ -133,10 +133,10 @@ export function usePrasarana() {
         toast.error("Error", { description: result.message });
         return false;
       }
-    } catch (err) {
-      console.error("[usePrasarana] Update error:", err);
+    } catch (error) {
+      console.error("[usePrasarana] Update error:", error);
       toast.error("Error", { 
-        description: err instanceof Error ? err.message : "Gagal mengupdate prasarana" 
+        description: error instanceof Error ? error.message : "Gagal mengupdate prasarana" 
       });
       return false;
     } finally {
@@ -161,8 +161,8 @@ export function usePrasarana() {
         toast.error("Error", { description: result.message });
         return false;
       }
-    } catch (err) {
-      console.error("[usePrasarana] Delete error:", err);
+    } catch (error) {
+      console.error("[usePrasarana] Delete error:", error);
       toast.error("Error", { description: "Gagal menghapus prasarana" });
       return false;
     } finally {

@@ -14,17 +14,16 @@ const baseProfileSchema = z.object({
 
 const mahasiswaSchema = z.object({
     nim: z.string().min(1, "NIM harus diisi"),
-    jurusan: z.string().min(1, "Jurusan harus diisi"),
-    prodi: z.string().min(1, "Program studi harus diisi"),
+    jurusanId: z.string().min(1, "Jurusan harus dipilih"),
+    prodiId: z.string().min(1, "Program studi harus dipilih"),
 });
 
 const pegawaiSchema = z.object({
-    nik: z.string().min(1, "NIK harus diisi"),
+    nomer_induk: z.string().min(1, "Nomor Induk harus diisi"),
     unit_pegawai: z.string().min(1, "Unit pegawai harus diisi"),
 });
 
-export async function createProfile( profileParams: Profile) {
-
+export async function createProfile(profileParams: Profile) {
   let finalSchema = baseProfileSchema;
 
   if (profileParams.posisi === "mahasiswa") {
@@ -47,18 +46,17 @@ export async function createProfile( profileParams: Profile) {
       ...(profileParams.posisi === "mahasiswa" ? {
           mahasiswa: {
               nim: profileParams.mahasiswa?.nim,
-              jurusan: profileParams.mahasiswa?.jurusan,
-              prodi: profileParams.mahasiswa?.prodi
+              jurusanId: profileParams.mahasiswa?.jurusanId,
+              prodiId: profileParams.mahasiswa?.prodiId
           }
       } : {}),
       ...(profileParams.posisi === "pegawai" ? {
           pegawai: {
-              nik: profileParams.pegawai?.nik,
+              nomer_induk: profileParams.pegawai?.nomer_induk,
               unit_pegawai: profileParams.pegawai?.unit_pegawai
           }
       } : {})
   };
-
 
   const validatedData = finalSchema.safeParse(dataToValidate);
   if (!validatedData.success) {

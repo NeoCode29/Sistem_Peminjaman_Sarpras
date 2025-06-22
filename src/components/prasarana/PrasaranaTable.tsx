@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
 import { EditIcon, Trash2Icon } from "lucide-react"
-import { Prisma, StatusPeminjaman } from "@prisma/client"
+import { Prisma, StatusSarpras } from "@prisma/client"
 import { Badge } from "@/components/ui/badge"
 
 type PrasaranaWithImages = Prisma.PrasaranaGetPayload<{
@@ -36,7 +36,7 @@ export function PrasaranaTable({
             <TableHead>Nama</TableHead>
             <TableHead>Lokasi</TableHead>
             <TableHead>Kapasitas</TableHead>
-            <TableHead>Kondisi</TableHead>
+            <TableHead>Deskripsi</TableHead>
             <TableHead>Status</TableHead>
             <TableHead className="w-[100px]">Aksi</TableHead>
           </TableRow>
@@ -60,12 +60,12 @@ export function PrasaranaTable({
                 <TableCell>{item.nama}</TableCell>
                 <TableCell>{item.lokasi || "-"}</TableCell>
                 <TableCell>{item.kapasitas || "-"}</TableCell>
-                <TableCell>{item.kondisi || "-"}</TableCell>
+                <TableCell>{item.deskripsi || "-"}</TableCell>
                 <TableCell>
                   <Badge
-                    variant={item.status === StatusPeminjaman.TERSEDIA ? "default" : "destructive"}
+                    variant={item.status === StatusSarpras.TERSEDIA ? "default" : "destructive"}
                   >
-                    {item.status === StatusPeminjaman.TERSEDIA ? "Tersedia" : "Dipinjam"}
+                    {item.status === StatusSarpras.TERSEDIA ? "Tersedia" : "Dipinjam"}
                   </Badge>
                 </TableCell>
                 <TableCell>

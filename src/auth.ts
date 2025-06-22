@@ -6,6 +6,7 @@ import { UserRole } from "@prisma/client"
 import type { Account, Profile, User } from "next-auth"
 import type { AdapterUser } from "@auth/core/adapters"
 import type { JWT } from "next-auth/jwt"
+import { logAuthActivity } from "./service/logService"
 
 declare module "next-auth" {
   interface Session {
@@ -30,8 +31,8 @@ export const config: NextAuthConfig = {
   adapter: PrismaAdapter(prisma),
   providers: [
     Google({
-      clientId: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!
+      clientId: process.env.AUTH_GOOGLE_ID!,
+      clientSecret: process.env.AUTH_GOOGLE_SECRET!
     })
   ],
   pages: {
@@ -133,6 +134,19 @@ export const config: NextAuthConfig = {
     async jwt({ token, user, trigger, session }) {
       if (trigger === "signIn" && user) {
         token.role = user.role;
+        
+        // Log login activity
+        if (token.sub) {
+          try {
+            await logAuthActivity(
+              token.sub,
+              'LOGIN',
+              `Login melalui ${user.email}`
+            );
+          } catch (error) {
+            // Silently fail logging to not affect login flow
+          }
+        }
       } else if (trigger === "update" && session?.user?.role) {
         token.role = session.user.role;
       }

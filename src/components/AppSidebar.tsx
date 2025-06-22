@@ -7,11 +7,11 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
-import { LogOut } from "lucide-react"
 import Image from 'next/image'
 import Link from 'next/link'
 import { menuConfig } from '@/config/menu'
 import { UserRole } from '@prisma/client'
+import { SignOutButton } from './auth/SignOutButton'
 
 interface AppSidebarProps {
   role?: UserRole
@@ -52,12 +52,11 @@ export function AppSidebar({ role = 'PEMINJAM' }: AppSidebarProps) {
           ))}
           {/* Logout button at the bottom */}
           <SidebarMenuItem className="mt-auto">
-            <SidebarMenuButton asChild>
-              <Link href="/auth/signout" className="flex items-center gap-3 text-red-600">
-                <LogOut className="h-4 w-4" />
-                <span>Keluar</span>
-              </Link>
-            </SidebarMenuButton>
+            <SignOutButton 
+              variant="ghost" 
+              size="sm"
+              className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50"
+            />
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarContent>

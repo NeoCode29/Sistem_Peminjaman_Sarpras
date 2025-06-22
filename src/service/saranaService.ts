@@ -69,8 +69,7 @@ export async function getAllSarana({
         totalPages: Math.ceil(total / limit),
       },
     };
-  } catch (error) {
-    console.error("[getAllSarana] error:", error);
+      } catch {
     return {
       success: false,
       message: "Gagal mengambil data sarana",
@@ -106,8 +105,7 @@ export async function getSaranaById(id: string): Promise<SaranaResponse<SaranaWi
       message: "Berhasil mengambil data sarana",
       data: sarana,
     };
-  } catch (error) {
-    console.error("[getSaranaById] error:", error);
+  } catch {
     return {
       success: false,
       message: "Gagal mengambil data sarana",
@@ -131,8 +129,7 @@ export async function createSarana(
       try {
         const uploadResult = await saranaDrive.uploadImage(validated.image);
         imageUrl = uploadResult.url;
-      } catch (error) {
-        console.error("[createSarana] Image upload error:", error);
+              } catch {
         return {
           success: false,
           message: "Gagal mengupload gambar sarana",
@@ -148,7 +145,9 @@ export async function createSarana(
         satuanId: validated.satuanId,
         jenis: validated.jenis,
         stok: validated.stok || 0,
-        sisa: validated.sisa || 0,
+        sisa: validated.jenis === "BERNOMOR" 
+          ? validated.detailSarana?.length || 0 
+          : validated.stok || 0,
         lokasi: validated.lokasi,
         status: validated.status,
         image_url: imageUrl,
@@ -169,7 +168,6 @@ export async function createSarana(
       data: sarana,
     };
   } catch (error) {
-    console.error("[createSarana]", error);
     if (error instanceof z.ZodError) {
       return {
         success: false,
@@ -227,16 +225,14 @@ export async function updateSarana(
           try {
             const fileId = existing.image_url.split("id=")[1];
             await saranaDrive.deleteFile(fileId);
-          } catch (error) {
-            console.error("[updateSarana] Failed to delete old image:", error);
+          } catch {
             // Continue with update even if old image deletion fails
           }
         }
         // Upload new image
         const uploadResult = await saranaDrive.uploadImage(validated.image);
         imageUrl = uploadResult.url;
-      } catch (error) {
-        console.error("[updateSarana] Image handling error:", error);
+              } catch {
         return {
           success: false,
           message: "Gagal mengupdate gambar sarana",
@@ -249,8 +245,7 @@ export async function updateSarana(
         try {
           const fileId = existing.image_url.split("id=")[1];
           await saranaDrive.deleteFile(fileId);
-        } catch (error) {
-          console.error("[updateSarana] Failed to delete old image:", error);
+        } catch {
           // Continue with update even if old image deletion fails
         }
       }
@@ -265,7 +260,9 @@ export async function updateSarana(
         satuanId: validated.satuanId,
         jenis: validated.jenis,
         stok: validated.stok,
-        sisa: validated.sisa,
+        sisa: validated.jenis === "BERNOMOR"
+          ? validated.detailSarana?.length || 0
+          : validated.stok,
         lokasi: validated.lokasi,
         status: validated.status,
         image_url: imageUrl,
@@ -287,7 +284,6 @@ export async function updateSarana(
       data: sarana,
     };
   } catch (error) {
-    console.error("[updateSarana]", error);
     if (error instanceof z.ZodError) {
       return {
         success: false,
@@ -335,8 +331,7 @@ export async function deleteSarana(id: string): Promise<SaranaResponse<void>> {
       try {
         const fileId = sarana.image_url.split("id=")[1];
         await saranaDrive.deleteFile(fileId);
-      } catch (error) {
-        console.error("[deleteSarana] Failed to delete image:", error);
+      } catch {
         // Continue with deletion even if image deletion fails
       }
     }
@@ -348,11 +343,50 @@ export async function deleteSarana(id: string): Promise<SaranaResponse<void>> {
       message: "Berhasil menghapus sarana",
       data: undefined,
     };
-  } catch (error) {
-    console.error("[deleteSarana] error:", error);
+  } catch {
     return {
       success: false,
       message: "Gagal menghapus sarana",
+      data: null,
+    };
+  }
+}
+
+/**
+ * Get available sarana for pickup checklist with detail items
+ */
+export async function getAvailableSaranaForPickup(): Promise<SaranaResponse<SaranaWithRelations[]>> {
+  try {
+    const sarana = await prisma.sarana.findMany({
+      where: {
+        status: "TERSEDIA",
+        sisa: {
+          gt: 0
+        }
+      },
+      include: {
+        satuanSatuan: true,
+        kategoriSarana: true,
+        detailSarana: {
+          where: {
+            status: "TERSEDIA"
+          }
+        },
+      },
+      orderBy: {
+        nama: "asc"
+      }
+    });
+
+    return {
+      success: true,
+      message: "Berhasil mengambil data sarana untuk checklist",
+      data: sarana,
+    };
+  } catch {
+    return {
+      success: false,
+      message: "Gagal mengambil data sarana untuk checklist",
       data: null,
     };
   }

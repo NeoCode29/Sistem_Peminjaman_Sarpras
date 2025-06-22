@@ -1,12 +1,14 @@
 "use client";
-import { Bell, Info, UserCircle2, ShieldCheck, GraduationCap } from "lucide-react";
+import { Info, UserCircle2, ShieldCheck, GraduationCap } from "lucide-react";
 import Image from "next/image";
 import { SidebarTrigger } from "./ui/sidebar";
 import { format } from "date-fns";
 import { id } from "date-fns/locale";
 import { usePathname } from "next/navigation";
+import { NotificationPopover } from "./notifications/NotificationPopover";
 
 interface User {
+  id: string;
   name?: string | null;
   role: "ADMIN" | "PEMINJAM";
   image?: string | null;
@@ -63,10 +65,10 @@ export default function AppHeader({ user }: AppHeaderProps) {
 
       {/* Right: Icon & Profil */}
       <div className="flex items-center gap-2 md:gap-4">
-        <div className="hidden sm:flex items-center gap-4">
-          <Bell size={20} className="cursor-pointer" />
-          <Info size={20} className="cursor-pointer" />
-          <div className="border-l h-6 border-gray-300" />
+        <div className="flex items-center gap-2 md:gap-4">
+          <NotificationPopover userId={user.id} />
+          <Info size={20} className="cursor-pointer hidden sm:block" />
+          <div className="border-l h-6 border-gray-300 hidden sm:block" />
         </div>
         <div className="flex items-center gap-2">
           {user.image ? (
@@ -81,7 +83,7 @@ export default function AppHeader({ user }: AppHeaderProps) {
             <UserCircle2 className="w-7 h-7 md:w-8 md:h-8 text-gray-400" />
           )}
           <div className="text-sm hidden sm:block">
-            <div className="font-semibold leading-tight">{limitName(user.name || 'User')}</div>
+            <div className="font-semibold leading-tight text-left">{limitName(user.name || 'User')}</div>
             <div className="text-gray-500 text-xs -mt-1 flex items-center gap-1">
               <RoleIcon size={12} />
               {user.role.toLowerCase()}

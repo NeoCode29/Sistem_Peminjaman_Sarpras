@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
-import { prisma } from "@/lib/prisma";
 
 interface KategoriSarana {
   id: string;
@@ -42,7 +41,7 @@ export function useKategoriSatuan() {
       } else {
         toast.error("Error", { description: satuanData.message });
       }
-    } catch (err) {
+    } catch {
       const message = "Gagal mengambil data kategori dan satuan";
       setError(message);
       toast.error("Error", { description: message });

@@ -35,7 +35,12 @@ model User {
   // Relations
   accounts      Account[]
   sessions      Session[]
-
+  peminjaman    Peminjaman[]
+  marking       Marking[]
+  due_blocked   DateTime?
+  logAplikasi   LogAplikasi[]
+  notifications Notification[] @relation("NotificationSender")
+  notificationsReceiver Notification[] @relation("NotificationReceiver")
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
 }
@@ -46,13 +51,17 @@ model Mahasiswa {
   nim String?
   jurusan String?
   prodi String?
+  jurusanId String?
+  prodiId String?
+  jurusanJurusan Jurusan? @relation(fields: [jurusanId], references: [id])
+  prodiProdi Prodi? @relation(fields: [prodiId], references: [id])
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Pegawai {
   id String @id @default(cuid())
   userId String @unique
-  nik String?
+  nomer_induk String?
   unit_pegawai String?
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
@@ -135,6 +144,8 @@ model Sarana {
   detailSarana   DetailSarana[]    // untuk barang BERNOMOR
   lokasi         String?
   image_url      String?
+
+  peminjamanSarana PeminjamanSarana[]
   
   createdAt      DateTime          @default(now())
   updatedAt      DateTime          @updatedAt
@@ -179,6 +190,7 @@ model Prasarana {
   updatedAt DateTime @updatedAt
 
   image_url ImagePrasarana[]
+  peminjamanPrasarana PeminjamanPrasarana[]
 }
 
 
@@ -188,3 +200,199 @@ model ImagePrasarana {
   image_url String
   prasarana Prasarana @relation(fields: [prasaranaId], references: [id], onDelete: Cascade)
 }
+
+
+// Membuat model untuk tabel peminjaman
+
+enum StatusPeminjaman {
+  DIBATALKAN
+  DALAM_PROSES
+  DITERIMA
+  SELESAI
+  DITOLAK
+}
+
+enum StatusPengajuan {
+  PENGAJUAN_DITERIMA
+  PENGAJUAN_DITOLAK
+  MENUNGGU_PENINJAUAN
+  DIBATALKAN
+}
+
+enum StatusPengambilan {
+  MENUNGGU_PENGAMBILAN
+  SUDAH_MENGAMBIL
+  TERLAMBAT_MENGAMBIL
+  NULL
+}
+
+enum StatusPengembalian {
+  MENUNGGU_PENGEMBALIAN
+  MENUNGGU_VALIDASI
+  SUDAH_MENGEMBALIKAN
+  TERLAMBAT_MENGEMBALIKAN
+  NULL
+}
+
+enum SarprasPeminjaman {
+  PRASARANA
+  SARANA
+  BOTH
+}
+
+model Peminjaman {
+  id String @id @default(cuid())
+  userId String 
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  ormawaId String?
+  ormawa Ormawa? @relation(fields: [ormawaId], references: [id])
+  unit_pegawai String?
+
+  status_peminjaman StatusPeminjaman @default(DALAM_PROSES)
+  status_pengajuan StatusPengajuan @default(MENUNGGU_PENINJAUAN)
+  status_pengambilan StatusPengambilan @default(NULL)
+  status_pengembalian StatusPengembalian @default(NULL)
+
+  tanggal_pengajuan DateTime @default(now())
+  tanggal_pengambilan DateTime?
+  tanggal_pengembalian DateTime?
+
+  nama_acara String
+  jumlah_peserta Int?
+  tanggal_acara_dimulai DateTime?
+  tanggal_acara_berakhir DateTime?
+  deskripsi_acara String? @default("")
+  url_surat_pengajuan String?
+  massage_admin String?
+
+  sarpras_peminjaman SarprasPeminjaman @default(BOTH)
+  peminjamanPrasarana PeminjamanPrasarana[]
+  peminjamanSarana PeminjamanSarana[]
+}
+
+model PeminjamanPrasarana {
+  id String @id @default(cuid())
+  peminjamanId String
+  prasaranaId String
+  peminjaman Peminjaman @relation(fields: [peminjamanId], references: [id], onDelete: Cascade)
+  prasarana Prasarana @relation(fields: [prasaranaId], references: [id], onDelete: Cascade)
+  sudah_ambil Boolean @default(false)
+  sudah_kembali Boolean @default(false)
+}
+
+model PeminjamanSarana {
+  id String @id @default(cuid())
+  peminjamanId String
+  saranaId String
+  jumlah Int
+  peminjaman Peminjaman @relation(fields: [peminjamanId], references: [id], onDelete: Cascade)
+  sarana Sarana @relation(fields: [saranaId], references: [id], onDelete: Cascade)
+  sudah_dipinjam Boolean @default(false)
+  peminjamanSaranaDetail PeminjamanSaranaDetail[]
+  sudah_ambil Boolean @default(false)
+  sudah_kembali Boolean @default(false)
+}
+
+model PeminjamanSaranaDetail {
+  id String @id @default(cuid())
+  peminjamanSaranaId String
+  peminjamanSarana PeminjamanSarana @relation(fields: [peminjamanSaranaId], references: [id], onDelete: Cascade)
+  nama_barang String
+  satuan String
+  sudah_ambil Boolean @default(false)
+  sudah_kembali Boolean @default(false)
+}
+
+model LogAplikasi {
+  id String @id @default(cuid())
+  userId String
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  log String
+  createdAt DateTime @default(now())
+}
+
+model Pengaturan {
+  id String @id @default(cuid())
+  nama String @unique
+  nilai String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  senderId    String
+  sender      User     @relation("NotificationSender", fields: [senderId], references: [id], onDelete: Cascade)
+  receiverId String
+  receiver User @relation("NotificationReceiver", fields: [receiverId], references: [id], onDelete: Cascade)
+  message   String   @db.Text
+  isRead    Boolean  @default(false)
+  url String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+
+model Jurusan {
+  id String @id @default(cuid())
+  nama String @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  prodi Prodi[]
+  mahasiswa Mahasiswa[]
+}
+
+model Prodi {
+  id String @id @default(cuid())
+  nama String @unique
+  jurusanId String
+  jurusan Jurusan @relation(fields: [jurusanId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  mahasiswa Mahasiswa[]
+}
+
+model Ormawa {
+  id String @id @default(cuid())
+  nama String @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  peminjaman Peminjaman[]
+  marking Marking[]
+}
+
+// Marking model untuk fitur marking acara/peminjaman
+model Marking {
+  id String @id @default(cuid())
+  userId String
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Organisasi mahasiswa (jika user adalah mahasiswa)
+  ormawaId String?
+  ormawa Ormawa? @relation(fields: [ormawaId], references: [id])
+  
+  // Unit pegawai (jika user adalah pegawai)
+  unit_pegawai String?
+  
+  nama_acara String
+  tanggal_acara_dimulai DateTime
+  tanggal_acara_berakhir DateTime?
+  waktu_mulai String? // Format HH:MM
+  waktu_berakhir String? // Format HH:MM
+  deskripsi String?
+  lokasi String?
+  lokasi_manual String? // Jika memilih "Lainnya" di select lokasi
+  jumlah_peserta Int?
+  
+  status MarkingStatus @default(AKTIF)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum MarkingStatus {
+  AKTIF
+  SELESAI
+  DIBATALKAN
+} 

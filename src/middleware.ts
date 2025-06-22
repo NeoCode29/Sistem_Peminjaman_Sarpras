@@ -1,17 +1,32 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
+import { protectPeminjamanDetail } from "@/middleware/peminjaman-protection";
 
 // Paths that require authentication
 const PROTECTED_PATHS = ["/profile", "/peminjaman", "/pengembalian"];
 
-// Paths that require admin role
-const ADMIN_PATHS = ["/admin"];
-
-// Paths that require peminjam role
-const PEMINJAM_PATHS = ["/peminjam"];
+// Role-based path configurations
+const ROLE_PATHS = {
+  ADMIN: {
+    paths: ["/admin"],
+    redirect: "/unauthorized"
+  },
+  PEMINJAM: {
+    paths: ["/peminjam"],
+    redirect: "/unauthorized"
+  }
+};
 
 // Public paths that don't require authentication
-const PUBLIC_PATHS = ["/auth/signin", "/api/auth", "/api/profile/check"];
+const PUBLIC_PATHS = [
+  "/auth/signin", 
+  "/api/auth",
+  "/api/profile/check",
+  "/api/auth/check-role",
+  "/api/auth/check-session",
+  "/api/auth/checkout",
+  "/api/peminjaman/check-ownership"
+];
 
 export default auth(async (req) => {
   const { pathname } = req.nextUrl;
@@ -31,6 +46,9 @@ export default auth(async (req) => {
     return NextResponse.next();
   }
 
+  // Get base URL for API calls
+  const baseUrl = process.env.NEXTAUTH_URL || req.nextUrl.origin;
+
   // Handle dashboard access based on role
   if (pathname === "/dashboard") {
     const userRole = session.user?.role || "PEMINJAM";
@@ -41,14 +59,25 @@ export default auth(async (req) => {
     }
   }
 
-  // Check admin access
-  if (ADMIN_PATHS.some(path => pathname.startsWith(path)) && session.user?.role !== "ADMIN") {
-    return Response.redirect(new URL("/unauthorized", req.url));
+  // Check role-based access
+  const userRole = session.user?.role;
+  
+  // Check admin paths
+  if (ROLE_PATHS.ADMIN.paths.some(path => pathname.startsWith(path)) && userRole !== "ADMIN") {
+    return Response.redirect(new URL(ROLE_PATHS.ADMIN.redirect, req.url));
   }
 
-  // Check peminjam access
-  if (PEMINJAM_PATHS.some(path => pathname.startsWith(path)) && session.user?.role !== "PEMINJAM") {
-    return Response.redirect(new URL("/unauthorized", req.url));
+  // Check peminjam paths
+  if (ROLE_PATHS.PEMINJAM.paths.some(path => pathname.startsWith(path)) && userRole !== "PEMINJAM") {
+    return Response.redirect(new URL(ROLE_PATHS.PEMINJAM.redirect, req.url));
+  }
+
+  // Protect peminjaman detail pages
+  if (pathname.includes('/peminjaman/') && pathname.split('/').length > 3) {
+    const protectionResponse = await protectPeminjamanDetail(req);
+    if (protectionResponse.status !== 200) {
+      return protectionResponse;
+    }
   }
 
   // Profile completion check - only for specific paths
@@ -56,11 +85,14 @@ export default auth(async (req) => {
       !pathname.startsWith("/auth/create-profile") && 
       (pathname.startsWith("/admin") || pathname.startsWith("/peminjam"))) {
     try {
-      const baseUrl = process.env.NEXT_PUBLIC_APP_URL || req.nextUrl.origin;
-      const response = await fetch(`${baseUrl}/api/profile/check?userId=${session.user.id}`);
-      const data = await response.json();
+      const profileResponse = await fetch(`${baseUrl}/api/profile/check?userId=${session.user.id}`, {
+        headers: {
+          cookie: req.headers.get("cookie") || "",
+        },
+      });
+      const profileData = await profileResponse.json();
 
-      if (!data.hasMahasiswaOrPegawai && pathname !== "/auth/create-profile") {
+      if (!profileData.hasMahasiswaOrPegawai && pathname !== "/auth/create-profile") {
         return Response.redirect(new URL("/auth/create-profile", req.url));
       }
     } catch (error) {
@@ -69,7 +101,7 @@ export default auth(async (req) => {
   }
 
   return NextResponse.next();
-});
+})
 
 export const config = {
   matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],

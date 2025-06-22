@@ -1,3 +1,5 @@
+"use server";
+
 import { google } from 'googleapis'
 import { Readable } from 'stream'
 import { env } from '@/env.mjs'

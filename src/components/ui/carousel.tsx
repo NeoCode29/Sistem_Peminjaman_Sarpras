@@ -1,9 +1,9 @@
 "use client"
 
 import * as React from "react"
-import Image from "next/image"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { Button } from "./button"
+import { GoogleDriveImage } from "./google-drive-image"
 
 interface CarouselProps {
   images: string[]
@@ -33,11 +33,17 @@ export function Carousel({
       <div className={`relative w-full ${
         aspectRatio === "square" ? "aspect-square" : "aspect-video"
       }`}>
-        <Image
+        <GoogleDriveImage
           src={images[currentIndex]}
           alt={`Image ${currentIndex + 1}`}
           fill
           className="object-cover"
+          sizes="(max-width: 768px) 100vw, 50vw"
+          fallback={
+            <div className="w-full h-full flex items-center justify-center bg-gray-100 text-gray-400">
+              <span className="text-sm">Gambar tidak dapat dimuat</span>
+            </div>
+          }
         />
       </div>
 

@@ -8,7 +8,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { SaranaWithRelations } from "@/service/saranaService"
-import { StatusPeminjaman, JenisBarang } from "@prisma/client"
+import { StatusSarpras, JenisBarang } from "@prisma/client"
 import Image from "next/image"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"
@@ -127,7 +127,7 @@ export function SaranaInfoDialog({
                           <div className="grid grid-cols-4 items-center gap-4">
                             <div className="font-medium">Status</div>
                             <div className="col-span-3">
-                              {detail.status === StatusPeminjaman.TERSEDIA ? "Tersedia" : "Dipinjam"}
+                              {detail.status === StatusSarpras.TERSEDIA ? "Tersedia" : "Dipinjam"}
                             </div>
                           </div>
 

@@ -7,11 +7,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { StatusPeminjaman } from "@prisma/client"
+import { StatusSarpras } from "@prisma/client"
 
 interface PrasaranaFilterProps {
-  value?: StatusPeminjaman
-  onValueChange: (value: StatusPeminjaman) => void
+  value?: StatusSarpras
+  onValueChange: (value: StatusSarpras) => void
 }
 
 export function PrasaranaFilter({ value, onValueChange }: PrasaranaFilterProps) {
@@ -21,8 +21,8 @@ export function PrasaranaFilter({ value, onValueChange }: PrasaranaFilterProps) 
         <SelectValue placeholder="Filter Status" />
       </SelectTrigger>
       <SelectContent>
-        <SelectItem value={StatusPeminjaman.TERSEDIA}>Tersedia</SelectItem>
-        <SelectItem value={StatusPeminjaman.DIPINJAM}>Dipinjam</SelectItem>
+        <SelectItem value={StatusSarpras.TERSEDIA}>Tersedia</SelectItem>
+        <SelectItem value={StatusSarpras.DIPINJAM}>Dipinjam</SelectItem>
       </SelectContent>
     </Select>
   )

@@ -48,12 +48,12 @@ async function createFolderIfNotExists(folderName: string): Promise<string> {
     }
 
     return folder.data.id
-  } catch (error: any) {
-    console.error("Error creating/finding folder:", error)
-    if (error.message.includes("invalid_grant")) {
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    if (errorMessage.includes("invalid_grant")) {
       throw new Error("Google Drive authentication failed. Please check your credentials.")
     }
-    throw new Error(`Failed to create/find folder in Google Drive: ${error.message}`)
+    throw new Error(`Failed to create/find folder in Google Drive: ${errorMessage}`)
   }
 }
 
@@ -117,12 +117,12 @@ export async function uploadSaranaImage(file: File): Promise<string> {
 
     // Return direct image URL
     return `https://drive.google.com/uc?id=${response.data.id}`
-  } catch (error: any) {
-    console.error("Error uploading sarana image:", error)
-    if (error.message.includes("invalid_grant")) {
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    if (errorMessage.includes("invalid_grant")) {
       throw new Error("Google Drive authentication failed. Please check your credentials.")
     }
-    throw new Error(`Failed to upload sarana image: ${error.message}`)
+    throw new Error(`Failed to upload sarana image: ${errorMessage}`)
   }
 }
 
@@ -145,12 +145,12 @@ export async function deleteSaranaImage(fileUrl: string) {
     })
 
     return true
-  } catch (error: any) {
-    console.error("Error deleting sarana image:", error)
-    if (error.message.includes("invalid_grant")) {
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    if (errorMessage.includes("invalid_grant")) {
       throw new Error("Google Drive authentication failed. Please check your credentials.")
     }
-    throw new Error(`Failed to delete sarana image: ${error.message}`)
+    throw new Error(`Failed to delete sarana image: ${errorMessage}`)
   }
 }
 
@@ -214,12 +214,12 @@ export async function uploadPrasaranaImage(file: File): Promise<string> {
 
     // Return direct image URL
     return `https://drive.google.com/uc?id=${response.data.id}`
-  } catch (error: any) {
-    console.error("Error uploading prasarana image:", error)
-    if (error.message.includes("invalid_grant")) {
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    if (errorMessage.includes("invalid_grant")) {
       throw new Error("Google Drive authentication failed. Please check your credentials.")
     }
-    throw new Error(`Failed to upload prasarana image: ${error.message}`)
+    throw new Error(`Failed to upload prasarana image: ${errorMessage}`)
   }
 }
 
@@ -242,11 +242,11 @@ export async function deletePrasaranaImage(fileUrl: string) {
     })
 
     return true
-  } catch (error: any) {
-    console.error("Error deleting prasarana image:", error)
-    if (error.message.includes("invalid_grant")) {
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    if (errorMessage.includes("invalid_grant")) {
       throw new Error("Google Drive authentication failed. Please check your credentials.")
     }
-    throw new Error(`Failed to delete prasarana image: ${error.message}`)
+    throw new Error(`Failed to delete prasarana image: ${errorMessage}`)
   }
 } 

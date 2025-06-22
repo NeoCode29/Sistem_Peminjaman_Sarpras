@@ -34,19 +34,19 @@ export const menuConfig: MenuConfig = {
       href: "/admin/peminjaman",
     },
     {
-      title: "Riwayat Peminjaman",
-      icon: History,
-      href: "/admin/history",
-    },
-    {
       title: "Laporan",
       icon: FileText,
       href: "/admin/laporan",
     },
     {
+      title: "Log Aplikasi",
+      icon: History,
+      href: "/admin/log-aplikasi",
+    },
+    {
       title: "Pengaturan",
       icon: Settings,
-      href: "/admin/pengaturan",
+      href: "/admin/settings",
     },
   ],
   peminjam: [
@@ -56,24 +56,19 @@ export const menuConfig: MenuConfig = {
       href: "/peminjam",
     },
     {
-      title: "Daftar Sarana",
+      title: "Daftar Sarpras",
       icon: Building,
-      href: "/peminjam/sarana",
+      href: "/peminjam/daftar-sarpras",
     },
     {
-      title: "Ajukan Peminjaman",
+      title: "Daftar Peminjaman",
       icon: BookOpen,
-      href: "/peminjam/peminjaman/create",
+      href: "/peminjam/peminjaman",
     },
     {
-      title: "Riwayat Peminjaman",
-      icon: History,
-      href: "/peminjam/peminjaman/history",
-    },
-    {
-      title: "Profil",
+      title: "Pengaturan",
       icon: Settings,
-      href: "/peminjam/profile",
+      href: "/peminjam/settings",
     },
   ]
 }; 

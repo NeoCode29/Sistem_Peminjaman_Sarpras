@@ -11,7 +11,7 @@ import { Badge } from "@/components/ui/badge"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"
 import { CircleIcon, MapPinIcon, AlertCircleIcon, CheckCircleIcon, XCircleIcon, ClockIcon, ImageIcon } from "lucide-react"
-import Image from "next/image"
+import { GoogleDriveImage } from "@/components/ui/google-drive-image"
 
 interface DetailSarana {
   id: string
@@ -105,15 +105,20 @@ export function SaranaDetailDialog({
                     <div className="grid grid-cols-[140px,1fr] sm:grid-cols-[160px,1fr] gap-4">
                       <div className="w-full aspect-square rounded-lg overflow-hidden bg-white shadow-md ring-1 ring-black/10">
                         {data.image_url ? (
-                          <div className="relative w-full h-full">
-                            <Image 
-                              src={data.image_url} 
-                              alt={data.nama}
-                              fill
-                              priority
-                              className="object-cover"
-                            />
-                          </div>
+                          <GoogleDriveImage 
+                            src={data.image_url} 
+                            alt={data.nama}
+                            fill
+                            priority
+                            className="object-cover"
+                            sizes="160px"
+                            fallback={
+                              <div className="w-full h-full flex flex-col items-center justify-center bg-muted/30 text-muted-foreground gap-2">
+                                <ImageIcon className="h-6 w-6" />
+                                <p className="text-xs text-center">Gambar tidak dapat dimuat</p>
+                              </div>
+                            }
+                          />
                         ) : (
                           <div className="w-full h-full flex flex-col items-center justify-center bg-muted/30 text-muted-foreground gap-2">
                             <ImageIcon className="h-6 w-6" />

@@ -71,10 +71,7 @@ export async function validateImage(
     }
 
     return { isValid: true };
-  } catch (error) {
-    return {
-      isValid: false,
-      error: 'Invalid image file',
-    };
+  } catch {
+    return { isValid: false, error: "Gagal memvalidasi gambar" };
   }
 } 

@@ -26,10 +26,10 @@ export async function addPrasaranaImage(prasaranaId: string, file: File) {
       data: image,
       message: "Gambar berhasil ditambahkan",
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     return {
       success: false,
-      message: error.message || "Terjadi kesalahan saat menambahkan gambar",
+      message: error instanceof Error ? error.message : "Terjadi kesalahan saat menambahkan gambar",
     }
   }
 }
@@ -56,10 +56,10 @@ export async function deletePrasaranaImage(imageId: string) {
       success: true,
       message: "Gambar berhasil dihapus",
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     return {
       success: false,
-      message: error.message || "Terjadi kesalahan saat menghapus gambar",
+      message: error instanceof Error ? error.message : "Terjadi kesalahan saat menghapus gambar",
     }
   }
 } 

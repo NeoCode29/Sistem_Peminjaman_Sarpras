@@ -1,5 +1,5 @@
 import React, { ReactNode } from 'react';
-import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
+import { SidebarProvider } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/AppSidebar';
 import { auth } from '@/auth';
 import { redirect } from 'next/navigation';
@@ -11,17 +11,25 @@ interface AdminLayoutProps {
 
 const AdminLayout: React.FC<AdminLayoutProps> = async ({ children }) => {
     const session = await auth();
-    if (!session) {
+    if (!session || !session.user) {
         redirect('/auth/signin');
     }
+
+    // Ensure user has required properties
+    const user = {
+        id: session.user.id || '',
+        name: session.user.name || null,
+        role: session.user.role || 'ADMIN',
+        image: session.user.image || null,
+    };
 
     return (
         <SidebarProvider>
             <div className="min-h-screen flex w-screen">
-                <AppSidebar role={session.user.role} />
+                <AppSidebar role={user.role} />
                 <div className="flex-1 flex flex-col">
-                    <AppHeader user={session.user} />
-                    <main className="flex-grow p-6 bg-gray-100">
+                    <AppHeader user={user} />
+                    <main className="flex-grow p-6">
                         {children}
                     </main>
                 </div>

@@ -20,6 +20,11 @@ import {
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 
+/**
+ * Dialog component for editing user roles
+ * Used by: Admin
+ * Purpose: Allow administrators to change user roles between ADMIN and PEMINJAM
+ */
 interface EditRoleDialogProps {
   user: User | null;
   isOpen: boolean;
@@ -27,6 +32,12 @@ interface EditRoleDialogProps {
   onUpdate: (userId: string, newRole: UserRole) => Promise<boolean>;
 }
 
+/**
+ * EditRoleDialog Component
+ * Used by: Admin
+ * Purpose: Modal dialog for changing user roles with validation and loading states
+ * Workflow: Display current role -> Allow selection -> Call update action -> Close on success
+ */
 export function EditRoleDialog({
   user,
   isOpen,

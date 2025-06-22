@@ -3,7 +3,7 @@
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Edit2Icon, Trash2Icon } from "lucide-react"
-import { StatusPeminjaman } from "@prisma/client"
+import { StatusSarpras } from "@prisma/client"
 import Image from "next/image"
 
 interface PrasaranaCardProps {
@@ -13,7 +13,7 @@ interface PrasaranaCardProps {
   kapasitas?: number | null
   deskripsi?: string | null
   kondisi?: string | null
-  status: StatusPeminjaman
+  status: StatusSarpras
   image_url: { image_url: string }[]
   onEdit: () => void
   onDelete: () => void
@@ -47,11 +47,11 @@ export function PrasaranaCard({
         )}
         <div className="absolute top-2 right-2">
           <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-            status === StatusPeminjaman.TERSEDIA 
+            status === StatusSarpras.TERSEDIA 
               ? "bg-green-100 text-green-800"
               : "bg-red-100 text-red-800"
           }`}>
-            {status === StatusPeminjaman.TERSEDIA ? "Tersedia" : "Dipinjam"}
+            {status === StatusSarpras.TERSEDIA ? "Tersedia" : "Dipinjam"}
           </span>
         </div>
       </div>

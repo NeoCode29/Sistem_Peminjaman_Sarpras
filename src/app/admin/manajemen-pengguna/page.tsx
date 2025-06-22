@@ -2,16 +2,19 @@
 
 import { useEffect } from "react";
 import { useUserManagement } from "@/hooks/useUserManagement";
-import { createUserColumns } from "@/components/usertable-columns";
+import { createUserColumns } from "@/components/UserTableColumns";
 import { UserTable } from "@/components/UserTable";
 import { EditRoleDialog } from "@/components/EditRoleDialog";
+import { HukumanDialog } from "@/components/HukumanDialog";
+import { UserDetailDialog } from "@/components/UserDetailDialog";
 
 const ManajemenPenggunaPage = () => {
   const {
     users,
     metadata,
-    isLoading,
     editRoleDialog,
+    hukumanDialog,
+    userDetailDialog,
     currentSearch,
     currentRole,
     currentPosition,
@@ -22,6 +25,11 @@ const ManajemenPenggunaPage = () => {
     openEditRoleDialog,
     closeEditRoleDialog,
     handleRoleUpdate,
+    openHukumanDialog,
+    closeHukumanDialog,
+    handleHukumanUpdate,
+    openUserDetailDialog,
+    closeUserDetailDialog,
   } = useUserManagement();
 
   // Fetch users when filters change
@@ -30,7 +38,7 @@ const ManajemenPenggunaPage = () => {
   }, [fetchUsers, currentSearch, currentRole, currentPosition, metadata.page]);
 
   // Create table columns
-  const columns = createUserColumns(openEditRoleDialog);
+  const columns = createUserColumns(openEditRoleDialog, openHukumanDialog, openUserDetailDialog);
 
   return (
     <div className="container space-y-6 p-4 md:p-6">
@@ -39,7 +47,7 @@ const ManajemenPenggunaPage = () => {
           Manajemen Pengguna
         </h1>
         <p className="text-sm text-muted-foreground md:text-base">
-          Kelola data dan peran pengguna dalam sistem.
+          Kelola data, peran, dan hukuman pengguna dalam sistem.
         </p>
       </div>
 
@@ -60,6 +68,19 @@ const ManajemenPenggunaPage = () => {
           isOpen={editRoleDialog.isOpen}
           onClose={closeEditRoleDialog}
           onUpdate={handleRoleUpdate}
+        />
+
+        <HukumanDialog
+          user={hukumanDialog.user}
+          isOpen={hukumanDialog.isOpen}
+          onClose={closeHukumanDialog}
+          onUpdate={handleHukumanUpdate}
+        />
+
+        <UserDetailDialog
+          user={userDetailDialog.user}
+          isOpen={userDetailDialog.isOpen}
+          onClose={closeUserDetailDialog}
         />
       </div>
     </div>

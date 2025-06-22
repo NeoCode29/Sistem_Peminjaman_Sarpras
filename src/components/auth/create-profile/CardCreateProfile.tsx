@@ -27,7 +27,7 @@ import { Button } from "@/components/ui/button"
 import Image from "next/image"
 import { createProfile } from "@/app/auth/create-profile/actions"
 import { toast } from "sonner"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Profile } from "@/service/profileService"
 
 const formSchema = z.object({
@@ -39,8 +39,8 @@ const formSchema = z.object({
   jenis_kelamin: z.string().min(1, "Jenis kelamin harus dipilih"),
   mahasiswa: z.object({
     nim: z.string().min(1, "NIM harus diisi"),
-    jurusan: z.string().min(1, "Jurusan harus diisi"),
-    prodi: z.string().min(1, "Program studi harus diisi"),
+    jurusanId: z.string().min(1, "Jurusan harus dipilih"),
+    prodiId: z.string().min(1, "Program studi harus dipilih"),
   }).optional().refine(
     (data) => {
       // If posisi is mahasiswa, then mahasiswa data is required
@@ -52,7 +52,7 @@ const formSchema = z.object({
     }
   ),
   pegawai: z.object({
-    nik: z.string().min(1, "NIK harus diisi"),
+    nomer_induk: z.string().min(1, "Nomor Induk harus diisi"),
     unit_pegawai: z.string().min(1, "Unit pegawai harus diisi"),
   }).optional().refine(
     (data) => {
@@ -89,11 +89,11 @@ type FormValues = {
   jenis_kelamin: string;
   mahasiswa?: {
     nim: string;
-    jurusan: string;
-    prodi: string;
+    jurusanId: string;
+    prodiId: string;
   };
   pegawai?: {
-    nik: string;
+    nomer_induk: string;
     unit_pegawai: string;
   };
 }
@@ -107,6 +107,8 @@ interface CardCreateProfileProps {
 const CardCreateProfile = ({ userId, name, email }: CardCreateProfileProps) => {
   const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [jurusanList, setJurusanList] = useState<{ id: string; nama: string }[]>([])
+  const [prodiList, setProdiList] = useState<{ id: string; nama: string; jurusanId: string }[]>([])
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -119,17 +121,49 @@ const CardCreateProfile = ({ userId, name, email }: CardCreateProfileProps) => {
       jenis_kelamin: "",
       mahasiswa: {
         nim: "",
-        jurusan: "",
-        prodi: "",
+        jurusanId: "",
+        prodiId: "",
       },
       pegawai: {
-        nik: "",
+        nomer_induk: "",
         unit_pegawai: "",
       },
     },
   })
 
   const position = form.watch("posisi")
+  const selectedJurusanId = form.watch("mahasiswa.jurusanId")
+
+  useEffect(() => {
+    // Fetch jurusan list
+    const fetchJurusan = async () => {
+      try {
+        const response = await fetch('/api/jurusan');
+        const data = await response.json();
+        setJurusanList(data);
+      } catch (error) {
+        console.error('Error fetching jurusan:', error);
+      }
+    };
+
+    // Fetch prodi list when jurusan is selected
+    const fetchProdi = async () => {
+      if (selectedJurusanId) {
+        try {
+          const response = await fetch(`/api/prodi?jurusanId=${selectedJurusanId}`);
+          const data = await response.json();
+          setProdiList(data);
+        } catch (error) {
+          console.error('Error fetching prodi:', error);
+        }
+      } else {
+        setProdiList([]);
+      }
+    };
+
+    fetchJurusan();
+    fetchProdi();
+  }, [selectedJurusanId]);
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -143,10 +177,10 @@ const CardCreateProfile = ({ userId, name, email }: CardCreateProfileProps) => {
         ...values,
         mahasiswa: values.posisi === "mahasiswa" 
           ? values.mahasiswa 
-          : { nim: "", jurusan: "", prodi: "" },
+          : { nim: "", jurusanId: "", prodiId: "" },
         pegawai: values.posisi === "pegawai" 
           ? values.pegawai 
-          : { nik: "", unit_pegawai: "" }
+          : { nomer_induk: "", unit_pegawai: "" }
       };
 
       console.log("Submission data:", submissionData);
@@ -202,9 +236,9 @@ const CardCreateProfile = ({ userId, name, email }: CardCreateProfileProps) => {
                         field.onChange(value)
                         // Reset the other type's fields when switching
                         if (value === "mahasiswa") {
-                          form.setValue("pegawai", { nik: "", unit_pegawai: "" })
+                          form.setValue("pegawai", { nomer_induk: "", unit_pegawai: "" })
                         } else {
-                          form.setValue("mahasiswa", { nim: "", jurusan: "", prodi: "" })
+                          form.setValue("mahasiswa", { nim: "", jurusanId: "", prodiId: "" })
                         }
                       }}
                       className="grid grid-cols-2 gap-2"
@@ -348,13 +382,27 @@ const CardCreateProfile = ({ userId, name, email }: CardCreateProfileProps) => {
 
                 <FormField
                   control={form.control}
-                  name="mahasiswa.jurusan"
+                  name="mahasiswa.jurusanId"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Jurusan</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Masukkan jurusan" {...field} />
-                      </FormControl>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Pilih jurusan" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {jurusanList.map(jurusan => (
+                            <SelectItem key={jurusan.id} value={jurusan.id}>
+                              {jurusan.nama}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -362,13 +410,28 @@ const CardCreateProfile = ({ userId, name, email }: CardCreateProfileProps) => {
 
                 <FormField
                   control={form.control}
-                  name="mahasiswa.prodi"
+                  name="mahasiswa.prodiId"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Program Studi</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Masukkan program studi" {...field} />
-                      </FormControl>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                        disabled={!selectedJurusanId}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Pilih program studi" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {prodiList.map(prodi => (
+                            <SelectItem key={prodi.id} value={prodi.id}>
+                              {prodi.nama}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -380,12 +443,12 @@ const CardCreateProfile = ({ userId, name, email }: CardCreateProfileProps) => {
               <div className="space-y-4">
                 <FormField
                   control={form.control}
-                  name="pegawai.nik"
+                  name="pegawai.nomer_induk"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>NIK</FormLabel>
+                      <FormLabel>NIP/NDK/NIDN</FormLabel>
                       <FormControl>
-                        <Input placeholder="Masukkan NIK" {...field} />
+                        <Input placeholder="Masukkan NIP/NDK/NIDN" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

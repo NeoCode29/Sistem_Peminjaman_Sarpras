@@ -8,10 +8,9 @@ import { z } from "zod";
 import { StatusSarpras } from "@prisma/client";
 import {
   getSarana,
-  getSaranaById,
-  createSarana,
-  updateSarana,
-  deleteSarana,
+  createSaranaAction as createSarana,
+  updateSaranaAction as updateSarana,
+  deleteSaranaAction as deleteSarana,
 } from "@/actions/saranaActions";
 
 interface UseSaranaOptions {
@@ -55,7 +54,7 @@ export function useSarana({ initialPage = 1, initialLimit = 10 }: UseSaranaOptio
         setError(result.message);
         toast.error("Error", { description: result.message });
       }
-    } catch (err) {
+    } catch {
       const message = "Gagal mengambil data sarana";
       setError(message);
       toast.error("Error", { description: message });
@@ -76,7 +75,7 @@ export function useSarana({ initialPage = 1, initialLimit = 10 }: UseSaranaOptio
         toast.error("Error", { description: result.message });
       }
       return result;
-    } catch (err) {
+    } catch {
       const message = "Gagal membuat sarana";
       toast.error("Error", { description: message });
       return { success: false, message, data: null };
@@ -97,7 +96,7 @@ export function useSarana({ initialPage = 1, initialLimit = 10 }: UseSaranaOptio
         toast.error("Error", { description: result.message });
       }
       return result;
-    } catch (err) {
+    } catch {
       const message = "Gagal mengupdate sarana";
       toast.error("Error", { description: message });
       return { success: false, message, data: null };
@@ -118,7 +117,7 @@ export function useSarana({ initialPage = 1, initialLimit = 10 }: UseSaranaOptio
         toast.error("Error", { description: result.message });
       }
       return result;
-    } catch (err) {
+    } catch {
       const message = "Gagal menghapus sarana";
       toast.error("Error", { description: message });
       return { success: false, message, data: null };

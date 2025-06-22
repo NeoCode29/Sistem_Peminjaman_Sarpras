@@ -1,7 +1,7 @@
 import { google } from 'googleapis';
 import { Readable } from 'stream';
 import { env } from '@/env.mjs';
-import { validateImage } from '../utils/image-validation';
+// import { validateImage } from '../utils/image-validation';
 import { DriveUploadResult, DriveError } from './types';
 
 // Initialize Google Drive API
