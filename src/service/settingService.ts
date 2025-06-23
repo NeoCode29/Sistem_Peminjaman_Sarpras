@@ -12,7 +12,6 @@ export const getSettings = async () => {
     const settings = await prisma.pengaturan.findMany();
     return settings;
   } catch (error) {
-    console.error("Error getting settings:", error);
     throw new Error("Gagal mengambil pengaturan");
   }
 };
@@ -32,7 +31,6 @@ export const getSettingByName = async (nama: string) => {
     });
     return setting;
   } catch (error) {
-    console.error(`Error getting setting ${nama}:`, error);
     throw new Error(`Gagal mengambil pengaturan ${nama}`);
   }
 };
@@ -62,7 +60,6 @@ export const updateSetting = async (nama: string, nilai: string) => {
     });
     return setting;
   } catch (error) {
-    console.error("Error updating setting:", error);
     throw new Error("Gagal mengupdate pengaturan");
   }
 };
@@ -92,7 +89,6 @@ export const getTemplateSettings = async () => {
 
     return templates;
   } catch (error) {
-    console.error("Error getting template settings:", error);
     throw new Error("Gagal mengambil template pengaturan");
   }
 };

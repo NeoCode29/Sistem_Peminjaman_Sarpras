@@ -183,10 +183,7 @@ const CardCreateProfile = ({ userId, name, email }: CardCreateProfileProps) => {
           : { nomer_induk: "", unit_pegawai: "" }
       };
 
-      console.log("Submission data:", submissionData);
-
       const result = await createProfile(submissionData as Profile);
-      console.log("Profile creation result:", result);
 
       if (result.error) {
         toast.error("Error", {
@@ -203,7 +200,7 @@ const CardCreateProfile = ({ userId, name, email }: CardCreateProfileProps) => {
         router.push("/dashboard");
       }, 1000);
     } catch (error) {
-      console.error("Error submitting form:", error);
+      
       toast.error("Error", {
         description: "Terjadi kesalahan saat menyimpan profil"
       });

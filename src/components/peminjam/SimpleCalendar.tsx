@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, Calendar, Dot } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getCalendarEventsAction } from "@/actions/peminjamanActions";
+import { getMarkingEventsAction } from "@/actions/markingActions";
 
 interface CalendarEvent {
   id: string;
@@ -80,14 +81,14 @@ export function SimpleCalendar({ onDateSelect, selectedDate, className, showEven
         const startDate = startOfMonth(currentDate);
         const endDate = endOfMonth(currentDate);
         
-        // Fetch both peminjaman and marking data
+        // Fetch both peminjaman and marking data using actions
         const [peminjamanResult, markingResult] = await Promise.all([
           getCalendarEventsAction({
             startDate,
             endDate,
             limit: 50,
           }),
-          fetch('/api/marking').then(res => res.ok ? res.json() : [])
+          getMarkingEventsAction(startDate, endDate)
         ]);
 
         if (!isCancelled) {
@@ -101,35 +102,30 @@ export function SimpleCalendar({ onDateSelect, selectedDate, className, showEven
             })));
           }
 
-          // Add marking events (filter by date range)
-          if (markingResult && Array.isArray(markingResult)) {
-            const markingEvents = markingResult
-              .filter((marking: any) => {
-                const markingDate = new Date(marking.tanggal_acara_dimulai);
-                return markingDate >= startDate && markingDate <= endDate;
-              })
-              .map((marking: any) => ({
-                id: marking.id,
-                nama_acara: marking.nama_acara,
-                deskripsi_acara: marking.deskripsi,
-                tanggal_acara_dimulai: marking.tanggal_acara_dimulai,
-                tanggal_acara_berakhir: marking.tanggal_acara_berakhir,
-                jumlah_peserta: marking.jumlah_peserta || 0,
-                status_peminjaman: marking.status,
-                status_pengajuan: marking.status,
-                type: 'marking' as const,
-                // Add marking-specific fields
-                lokasi: marking.lokasi,
-                lokasi_manual: marking.lokasi_manual,
-                waktu_mulai: marking.waktu_mulai,
-                waktu_berakhir: marking.waktu_berakhir,
-                unit_pegawai: marking.unit_pegawai,
-                // Add default values for missing fields that EventDetailDialog expects
-                peminjamanSarana: [],
-                peminjamanPrasarana: [],
-                user: marking.user,
-                ormawa: marking.ormawa
-              }));
+          // Add marking events
+          if (markingResult.success && markingResult.data) {
+            const markingEvents = markingResult.data.map((marking: any) => ({
+              id: marking.id,
+              nama_acara: marking.nama_acara,
+              deskripsi_acara: marking.deskripsi,
+              tanggal_acara_dimulai: marking.tanggal_acara_dimulai,
+              tanggal_acara_berakhir: marking.tanggal_acara_berakhir,
+              jumlah_peserta: marking.jumlah_peserta || 0,
+              status_peminjaman: marking.status,
+              status_pengajuan: marking.status,
+              type: 'marking' as const,
+              // Add marking-specific fields
+              lokasi: marking.lokasi,
+              lokasi_manual: marking.lokasi_manual,
+              waktu_mulai: marking.waktu_mulai,
+              waktu_berakhir: marking.waktu_berakhir,
+              unit_pegawai: marking.unit_pegawai,
+              // Add default values for missing fields that EventDetailDialog expects
+              peminjamanSarana: [],
+              peminjamanPrasarana: [],
+              user: marking.user,
+              ormawa: marking.ormawa
+            }));
             
             allEvents.push(...markingEvents);
           }
@@ -140,7 +136,7 @@ export function SimpleCalendar({ onDateSelect, selectedDate, className, showEven
         }
       } catch (error) {
         if (!isCancelled) {
-          console.error("Error fetching events:", error);
+          // Handle error silently for better UX
           setEvents([]);
           onEventsLoad?.([]);
         }

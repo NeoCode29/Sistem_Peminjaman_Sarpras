@@ -52,7 +52,7 @@ export function PeminjamanPeminjamClient({ user }: PeminjamanPeminjamClientProps
 
   const handleSubmitPeminjaman = async (formData: FormData) => {
     try {
-      console.log("[PeminjamanPeminjamClient] Submitting FormData");
+  
       const result = await submitPengajuanAction(formData);
       
       if (result.error) {
@@ -63,7 +63,6 @@ export function PeminjamanPeminjamClient({ user }: PeminjamanPeminjamClientProps
       toast.success("Peminjaman berhasil dibuat");
       loadPeminjaman();
     } catch (error) {
-      console.error("[PeminjamanPeminjamClient] Error:", error);
       toast.error("Gagal membuat peminjaman");
     }
   };

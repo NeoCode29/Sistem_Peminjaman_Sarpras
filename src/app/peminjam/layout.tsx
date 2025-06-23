@@ -28,7 +28,7 @@ const PeminjamLayout = async ({ children }: { children: React.ReactNode }) => {
                 <AppSidebar role={user.role} />
                 <div className="flex-1 flex flex-col">
                     <AppHeader user={user} />
-                    <main className="flex-grow p-6 bg-gray-100">
+                    <main className="flex-grow  bg-gray-100">
                         {children}
                         <Toaster />
                     </main>

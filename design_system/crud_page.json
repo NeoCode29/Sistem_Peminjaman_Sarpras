@@ -1,0 +1,465 @@
+{
+    "designSystem": {
+      "layout": {
+        "structure": "sidebar-main-content",
+        "mainContent": {
+          "marginLeft": "240px",
+          "padding": "24px",
+          "backgroundColor": "#f9fafb"
+        }
+      },
+      "colors": {
+        "primary": {
+          "main": "#6366f1",
+          "hover": "#5855eb",
+          "light": "#e0e7ff"
+        },
+        "secondary": {
+          "main": "#10b981",
+          "light": "#d1fae5"
+        },
+        "neutral": {
+          "white": "#ffffff",
+          "gray50": "#f9fafb",
+          "gray100": "#f3f4f6",
+          "gray200": "#e5e7eb",
+          "gray300": "#d1d5db",
+          "gray400": "#9ca3af",
+          "gray500": "#6b7280",
+          "gray600": "#4b5563",
+          "gray700": "#374151",
+          "gray800": "#1f2937",
+          "gray900": "#111827"
+        },
+        "status": {
+          "active": "#10b981",
+          "inactive": "#f59e0b",
+          "error": "#ef4444"
+        }
+      },
+      "typography": {
+        "fontFamily": "Inter, -apple-system, BlinkMacSystemFont, sans-serif",
+        "scale": {
+          "xs": "12px",
+          "sm": "14px",
+          "base": "16px",
+          "lg": "18px",
+          "xl": "20px",
+          "2xl": "24px",
+          "3xl": "30px"
+        },
+        "weights": {
+          "normal": 400,
+          "medium": 500,
+          "semibold": 600,
+          "bold": 700
+        }
+      },
+      "spacing": {
+        "xs": "4px",
+        "sm": "8px",
+        "md": "12px",
+        "lg": "16px",
+        "xl": "20px",
+        "2xl": "24px",
+        "3xl": "32px",
+        "4xl": "48px"
+      },
+      "borderRadius": {
+        "sm": "4px",
+        "md": "6px",
+        "lg": "8px",
+        "xl": "12px",
+        "full": "9999px"
+      },
+      "shadows": {
+        "sm": "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
+        "md": "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+        "lg": "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)"
+      },
+      "components": {
+        "sidebar": {
+          "structure": "logo-navigation-tools",
+          "logo": {
+            "position": "top",
+            "padding": "20px",
+            "fontSize": "xl",
+            "fontWeight": "bold",
+            "color": "primary.main"
+          },
+          "navigation": {
+            "sections": [
+              {
+                "type": "main-menu",
+                "items": ["Dashboard", "Orders", "Customers", "Messages"]
+              },
+              {
+                "type": "tools",
+                "label": "TOOLS",
+                "items": ["Products", "Integrations", "Analytics", "Reports", "Discount"]
+              },
+              {
+                "type": "settings",
+                "items": ["Settings", "Security", "Help"]
+              }
+            ],
+            "itemStyle": {
+              "padding": "12px 20px",
+              "borderRadius": "md",
+              "margin": "2px 12px",
+              "fontSize": "sm",
+              "fontWeight": "medium"
+            },
+            "activeState": {
+              "backgroundColor": "primary.main",
+              "color": "white",
+              "fontWeight": "semibold"
+            },
+            "hoverState": {
+              "backgroundColor": "gray100"
+            }
+          }
+        },
+        "header": {
+          "structure": "search-actions-profile",
+          "height": "64px",
+          "padding": "0 24px",
+          "backgroundColor": "white",
+          "borderBottom": "1px solid #e5e7eb",
+          "elements": {
+            "searchBar": {
+              "width": "400px",
+              "placeholder": "Search...",
+              "icon": "search",
+              "borderRadius": "md"
+            },
+            "actions": {
+              "refreshButton": {
+                "icon": "refresh",
+                "variant": "ghost"
+              },
+              "notificationBadge": {
+                "color": "error",
+                "position": "top-right"
+              }
+            },
+            "profile": {
+              "avatar": "circular",
+              "dropdown": true,
+              "name": "Eshag Noor"
+            }
+          }
+        },
+        "contentHeader": {
+          "padding": "0 0 24px 0",
+          "elements": {
+            "breadcrumb": {
+              "fontSize": "sm",
+              "color": "gray500"
+            },
+            "title": {
+              "fontSize": "2xl",
+              "fontWeight": "bold",
+              "margin": "8px 0"
+            },
+            "actions": {
+              "addButton": {
+                "backgroundColor": "primary.main",
+                "color": "white",
+                "padding": "12px 16px",
+                "borderRadius": "md",
+                "fontSize": "sm",
+                "fontWeight": "medium"
+              }
+            }
+          }
+        },
+        "filterBar": {
+          "backgroundColor": "white",
+          "padding": "16px 20px",
+          "borderRadius": "lg",
+          "marginBottom": "20px",
+          "shadow": "sm",
+          "elements": {
+            "categoryFilter": {
+              "type": "dropdown",
+              "label": "Category",
+              "width": "200px"
+            },
+            "statusFilter": {
+              "type": "dropdown",
+              "label": "Status",
+              "width": "150px"
+            },
+            "priceFilter": {
+              "type": "dropdown",
+              "label": "Price",
+              "width": "150px"
+            },
+            "storeFilter": {
+              "type": "dropdown",
+              "label": "Store",
+              "width": "150px"
+            },
+            "sortBy": {
+              "type": "dropdown",
+              "label": "Sort by",
+              "width": "120px"
+            },
+            "filterButton": {
+              "type": "button",
+              "variant": "outline",
+              "icon": "filter"
+            }
+          }
+        },
+        "dataTable": {
+          "backgroundColor": "white",
+          "borderRadius": "lg",
+          "shadow": "sm",
+          "overflow": "hidden",
+          "structure": {
+            "header": {
+              "backgroundColor": "gray50",
+              "padding": "16px 20px",
+              "fontSize": "sm",
+              "fontWeight": "semibold",
+              "color": "gray700",
+              "borderBottom": "1px solid #e5e7eb"
+            },
+            "row": {
+              "padding": "16px 20px",
+              "borderBottom": "1px solid #f3f4f6",
+              "hoverState": {
+                "backgroundColor": "gray50"
+              }
+            }
+          },
+          "columns": [
+            {
+              "key": "product",
+              "label": "Product Name",
+              "width": "300px",
+              "type": "product-cell"
+            },
+            {
+              "key": "price",
+              "label": "Purchasable Unit Price",
+              "width": "180px",
+              "type": "currency"
+            },
+            {
+              "key": "products",
+              "label": "Products",
+              "width": "100px",
+              "type": "number"
+            },
+            {
+              "key": "views",
+              "label": "Views",
+              "width": "100px",
+              "type": "number"
+            },
+            {
+              "key": "status",
+              "label": "Status",
+              "width": "100px",
+              "type": "status-badge"
+            },
+            {
+              "key": "actions",
+              "label": "Action",
+              "width": "120px",
+              "type": "action-buttons"
+            }
+          ]
+        },
+        "productCell": {
+          "display": "flex",
+          "alignItems": "center",
+          "gap": "12px",
+          "productImage": {
+            "width": "48px",
+            "height": "48px",
+            "borderRadius": "md",
+            "objectFit": "cover"
+          },
+          "productInfo": {
+            "productName": {
+              "fontSize": "sm",
+              "fontWeight": "medium",
+              "color": "gray900",
+              "marginBottom": "4px"
+            },
+            "productMeta": {
+              "fontSize": "xs",
+              "color": "gray500"
+            }
+          }
+        },
+        "statusBadge": {
+          "padding": "4px 8px",
+          "borderRadius": "full",
+          "fontSize": "xs",
+          "fontWeight": "medium",
+          "variants": {
+            "active": {
+              "backgroundColor": "secondary.light",
+              "color": "secondary.main"
+            },
+            "inactive": {
+              "backgroundColor": "#fef3c7",
+              "color": "#d97706"
+            }
+          }
+        },
+        "actionButtons": {
+          "display": "flex",
+          "gap": "8px",
+          "editButton": {
+            "backgroundColor": "primary.main",
+            "color": "white",
+            "padding": "6px 12px",
+            "borderRadius": "md",
+            "fontSize": "xs",
+            "fontWeight": "medium"
+          },
+          "deleteButton": {
+            "backgroundColor": "transparent",
+            "border": "1px solid #e5e7eb",
+            "padding": "6px",
+            "borderRadius": "md",
+            "color": "gray500",
+            "hoverState": {
+              "backgroundColor": "gray50",
+              "color": "error"
+            }
+          }
+        },
+        "pagination": {
+          "display": "flex",
+          "justifyContent": "center",
+          "alignItems": "center",
+          "gap": "8px",
+          "marginTop": "24px",
+          "pageButton": {
+            "width": "36px",
+            "height": "36px",
+            "borderRadius": "md",
+            "fontSize": "sm",
+            "fontWeight": "medium",
+            "variants": {
+              "default": {
+                "backgroundColor": "transparent",
+                "color": "gray500",
+                "border": "1px solid #e5e7eb"
+              },
+              "active": {
+                "backgroundColor": "primary.main",
+                "color": "white"
+              },
+              "hover": {
+                "backgroundColor": "gray50"
+              }
+            }
+          }
+        },
+        "dropdown": {
+          "minWidth": "200px",
+          "backgroundColor": "white",
+          "border": "1px solid #e5e7eb",
+          "borderRadius": "md",
+          "shadow": "lg",
+          "padding": "8px 0",
+          "item": {
+            "padding": "8px 16px",
+            "fontSize": "sm",
+            "color": "gray700",
+            "hoverState": {
+              "backgroundColor": "gray50"
+            }
+          }
+        },
+        "button": {
+          "variants": {
+            "primary": {
+              "backgroundColor": "primary.main",
+              "color": "white",
+              "hoverState": {
+                "backgroundColor": "primary.hover"
+              }
+            },
+            "secondary": {
+              "backgroundColor": "white",
+              "color": "gray700",
+              "border": "1px solid #e5e7eb",
+              "hoverState": {
+                "backgroundColor": "gray50"
+              }
+            },
+            "ghost": {
+              "backgroundColor": "transparent",
+              "color": "gray500",
+              "hoverState": {
+                "backgroundColor": "gray50"
+              }
+            }
+          },
+          "sizes": {
+            "sm": {
+              "padding": "6px 12px",
+              "fontSize": "xs"
+            },
+            "md": {
+              "padding": "8px 16px",
+              "fontSize": "sm"
+            },
+            "lg": {
+              "padding": "12px 20px",
+              "fontSize": "base"
+            }
+          }
+        }
+      },
+      "patterns": {
+        "dashboardLayout": {
+          "description": "Standard dashboard layout with sidebar navigation and main content area",
+          "components": ["sidebar", "header", "contentArea"]
+        },
+        "dataManagement": {
+          "description": "Pattern for data tables with filtering, sorting, and actions",
+          "components": ["filterBar", "dataTable", "pagination"]
+        },
+        "productListing": {
+          "description": "Product display pattern with image, info, and actions",
+          "components": ["productCell", "statusBadge", "actionButtons"]
+        }
+      },
+      "interactions": {
+        "hover": {
+          "duration": "200ms",
+          "easing": "ease-in-out"
+        },
+        "click": {
+          "feedback": "scale-95",
+          "duration": "100ms"
+        },
+        "dropdown": {
+          "animation": "slideDown",
+          "duration": "150ms"
+        }
+      },
+      "responsive": {
+        "breakpoints": {
+          "sm": "640px",
+          "md": "768px",
+          "lg": "1024px",
+          "xl": "1280px"
+        },
+        "sidebarCollapse": {
+          "breakpoint": "lg",
+          "collapsedWidth": "64px"
+        }
+      }
+    }
+  }

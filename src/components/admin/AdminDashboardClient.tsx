@@ -5,7 +5,7 @@ import { format, isSameDay } from "date-fns";
 import { id } from "date-fns/locale";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { SimpleCalendar } from "../peminjam/SimpleCalendar";
+import { AdminCalendar } from "./AdminCalendar";
 import { 
   CalendarIcon, 
   Clock, 
@@ -42,6 +42,11 @@ export function AdminDashboardClient({
   const [isPending, startTransition] = useTransition();
   const [lastFetchKey, setLastFetchKey] = useState<string>("");
 
+  // Handle month changes in AdminCalendar
+  const handleDateChange = (newDate: Date) => {
+    setCurrentDate(newDate);
+  };
+
   // Fetch events when month changes
   useEffect(() => {
     const fetchKey = `calendar-${format(currentDate, 'yyyy-MM')}`;
@@ -64,7 +69,6 @@ export function AdminDashboardClient({
             toast.error(result.message || "Gagal mengambil data kalender");
           }
         } catch (error) {
-          console.error("Error fetching events:", error);
           toast.error("Terjadi kesalahan saat mengambil data kalender");
         } finally {
           setIsLoading(false);
@@ -104,13 +108,13 @@ export function AdminDashboardClient({
     return format(date, "HH:mm", { locale: id });
   };
 
-  // Get events for selected date
+  // Get events for selected date - include all events (peminjaman and marking)
   const selectedDateEvents = selectedDate ? events.filter(event => 
     event.tanggal_acara_dimulai && isSameDay(new Date(event.tanggal_acara_dimulai), selectedDate)
   ) : [];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+    <div className="min-h-screen">
       <div className="container mx-auto px-4 py-8 space-y-8">
         <div className="space-y-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -275,9 +279,12 @@ export function AdminDashboardClient({
             ) : (
               <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
                 <div className="lg:col-span-3">
-                    <SimpleCalendar 
+                    <AdminCalendar 
                       onDateSelect={handleDateSelect}
                       selectedDate={selectedDate}
+                      events={events}
+                      currentDate={currentDate}
+                      onDateChange={handleDateChange}
                     />
                 </div>
 
@@ -300,33 +307,53 @@ export function AdminDashboardClient({
                     </div>
                   ) : (
                     <div className="space-y-3 max-h-[600px] overflow-y-auto">
-                      {selectedDateEvents.map((event) => (
-                        <div 
-                          key={event.id} 
-                          className="p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors"
-                          onClick={() => window.open(`/admin/peminjaman/${event.id}`, '_blank')}
-                        >
-                          <div className="flex items-start justify-between gap-2 mb-2">
-                            <h4 className="font-medium text-sm text-gray-900 leading-tight">{event.nama_acara}</h4>
-                            {getStatusBadge(event.status_peminjaman, event.status_pengajuan)}
-                          </div>
-                          
-                              {event.tanggal_acara_dimulai && event.tanggal_acara_berakhir && (
-                            <div className="flex items-center gap-1 text-xs text-gray-600 mb-2">
-                                  <Clock className="w-3 h-3" />
-                                  <span>
-                                    {formatTime(new Date(event.tanggal_acara_dimulai))} - {formatTime(new Date(event.tanggal_acara_berakhir))}
-                                  </span>
-                                </div>
-                              )}
-
-                          <div className="flex items-center gap-2">
-                            <Badge variant="outline" className="text-xs bg-blue-50 text-blue-700 border-blue-200">
-                              {event.ormawa?.nama || event.unit_pegawai || event.user.name || event.user.email?.split('@')[0] || 'Unknown'}
-                                </Badge>
+                      {selectedDateEvents.map((event) => {
+                        const isMarking = (!event.peminjamanSarana || event.peminjamanSarana.length === 0) && 
+                                         (!event.peminjamanPrasarana || event.peminjamanPrasarana.length === 0);
+                        
+                        return (
+                          <div 
+                            key={event.id} 
+                            className={`p-3 border rounded-lg transition-colors ${
+                              isMarking 
+                                ? 'border-purple-200 bg-purple-50 hover:bg-purple-100' 
+                                : 'border-gray-200 hover:bg-gray-50 cursor-pointer'
+                            }`}
+                            onClick={() => !isMarking && window.open(`/admin/peminjaman/${event.id}`, '_blank')}
+                          >
+                            <div className="flex items-start justify-between gap-2 mb-2">
+                              <h4 className="font-medium text-sm text-gray-900 leading-tight">{event.nama_acara}</h4>
+                              <div className="flex gap-2">
+                                {isMarking && (
+                                  <Badge variant="outline" className="text-xs bg-purple-100 text-purple-700 border-purple-200">
+                                    Marking
+                                  </Badge>
+                                )}
+                                {getStatusBadge(event.status_peminjaman, event.status_pengajuan)}
                               </div>
                             </div>
-                      ))}
+                            
+                            {event.tanggal_acara_dimulai && event.tanggal_acara_berakhir && (
+                              <div className="flex items-center gap-1 text-xs text-gray-600 mb-2">
+                                <Clock className="w-3 h-3" />
+                                <span>
+                                  {formatTime(new Date(event.tanggal_acara_dimulai))} - {formatTime(new Date(event.tanggal_acara_berakhir))}
+                                </span>
+                              </div>
+                            )}
+
+                            <div className="flex items-center gap-2">
+                              <Badge variant="outline" className="text-xs bg-blue-50 text-blue-700 border-blue-200">
+                                {event.ormawa?.nama || event.unit_pegawai || event.user.name || event.user.email?.split('@')[0] || 'Unknown'}
+                              </Badge>
+                            </div>
+                            
+                            {!isMarking && (
+                              <p className="text-xs text-gray-500 mt-1">Klik untuk melihat detail peminjaman</p>
+                            )}
+                          </div>
+                        );
+                      })}
                     </div>
                   )}
 

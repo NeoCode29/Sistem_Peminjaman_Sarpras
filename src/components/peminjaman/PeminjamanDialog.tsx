@@ -362,20 +362,8 @@ export default function PeminjamanDialog({ open, setOpen, user, onSubmit, initia
     try {
       if (!validateStep3()) return;
 
-      console.log("[PeminjamanDialog] FormData before submission:");
-      console.log("- userId:", user.id);
-      console.log("- nama_acara:", formData.nama_acara);
-      console.log("- tanggal_acara_dimulai:", formData.tanggal_acara_dimulai);
-      console.log("- tanggal_acara_berakhir:", formData.tanggal_acara_berakhir);
-      console.log("- jumlah_peserta:", formData.jumlah_peserta);
-      console.log("- deskripsi_acara:", formData.deskripsi_acara);
-      console.log("- ormawa:", formData.ormawa);
-      console.log("- unit_pegawai:", formData.unit_pegawai);
-      console.log("- sarpras_peminjaman:", formData.sarpras_peminjaman);
-      console.log("- selectedPrasarana:", formData.selectedPrasarana);
-      console.log("- selectedSarana:", formData.selectedSarana);
+      
 
-      console.log("- surat_pengajuan file:", formData.surat_pengajuan?.name, "Size:", formData.surat_pengajuan?.size);
 
       // Combine date and time for proper datetime
       const startDateTime = new Date(formData.tanggal_acara_dimulai);
@@ -413,21 +401,13 @@ export default function PeminjamanDialog({ open, setOpen, user, onSubmit, initia
       submitData.append('surat_pengajuan', file);
       submitData.append('surat_pengajuan_name', file.name);
 
-      console.log("[PeminjamanDialog] Final FormData entries:");
-      for (const [key, value] of submitData.entries()) {
-        if (key === 'surat_pengajuan') {
-          console.log(key, 'File size:', (value as File).size, 'bytes, name:', (value as File).name);
-        } else {
-          console.log(key, value);
-        }
-      }
+
 
       await onSubmit(submitData);
       resetForm(); // Reset form after successful submit
       setOpen(false);
       toast("Pengajuan peminjaman berhasil dikirim");
     } catch (error) {
-      console.error('[PeminjamanDialog] Error submitting form:', error);
       toast("Terjadi kesalahan saat mengirim pengajuan");
     }
   };

@@ -767,18 +767,19 @@ export const updatePickupChecklist = async (
   }
 
   return await prisma.$transaction(async (tx) => {
-    // Update prasarana checklist (only items not already picked up)
+    // Update prasarana checklist - use individual updates to handle duplicates better
     if (checklist.prasaranaIds?.length) {
-      await tx.peminjamanPrasarana.updateMany({
-        where: {
-          peminjamanId,
-          prasaranaId: { in: checklist.prasaranaIds },
-          sudah_ambil: false, // Only update items not already picked up
-        },
-        data: {
-          sudah_ambil: true,
-        },
-      });
+      for (const prasaranaId of checklist.prasaranaIds) {
+        await tx.peminjamanPrasarana.updateMany({
+          where: {
+            peminjamanId,
+            prasaranaId,
+          },
+          data: {
+            sudah_ambil: true,
+          },
+        });
+      }
     }
 
         // Update sarana checklist
@@ -795,18 +796,17 @@ export const updatePickupChecklist = async (
         let peminjamanSaranaId: string;
 
         if (existingItem) {
-          // Update existing sarana item only if not already picked up to avoid duplication
-          if (!existingItem.sudah_ambil) {
-            await tx.peminjamanSarana.update({
-              where: {
-                id: existingItem.id,
-              },
-              data: {
-                sudah_ambil: true,
-                jumlah: item.jumlah, // Allow updating quantity during pickup
-              },
-            });
-          }
+          // Update existing sarana item - use upsert pattern to prevent duplicates
+          await tx.peminjamanSarana.update({
+            where: {
+              id: existingItem.id,
+            },
+            data: {
+              sudah_ambil: true,
+              jumlah: item.jumlah, // Allow updating quantity during pickup
+              sudah_dipinjam: true, // Mark as borrowed
+            },
+          });
           peminjamanSaranaId = existingItem.id;
         } else {
           // Create new additional sarana item
@@ -827,59 +827,58 @@ export const updatePickupChecklist = async (
         if (item.detailItems?.length || item.customSerials?.length) {
           const serialsToProcess = item.customSerials || item.detailItems || [];
           
-          // Only process if this item wasn't already picked up
-          if (existingItem && !existingItem.sudah_ambil) {
-            // Clear existing detail records to avoid duplication
-            await tx.peminjamanSaranaDetail.deleteMany({
+          // Always clear existing detail records to prevent duplication
+          await tx.peminjamanSaranaDetail.deleteMany({
+            where: {
+              peminjamanSaranaId,
+            },
+          });
+
+          // Update detail sarana status to DIPINJAM for actual detail IDs
+          if (item.detailItems?.length) {
+            await tx.detailSarana.updateMany({
               where: {
-                peminjamanSaranaId,
+                id: { in: item.detailItems },
+                saranaId: item.saranaId,
+                status: "TERSEDIA",
+              },
+              data: {
+                status: "DIPINJAM",
               },
             });
+          }
 
-            // Update detail sarana status to DIPINJAM for actual detail IDs
-            if (item.detailItems?.length) {
-              await tx.detailSarana.updateMany({
-                where: {
-                  id: { in: item.detailItems },
-                  saranaId: item.saranaId,
-                  status: "TERSEDIA",
-                },
-                data: {
-                  status: "DIPINJAM",
-                },
-              });
-            }
-
-            // Create detail records for tracking
-            for (const serial of serialsToProcess) {
-              await tx.peminjamanSaranaDetail.create({
-                data: {
-                  peminjamanSaranaId,
-                  nama_barang: serial || `Item Tanpa Serial`,
-                  satuan: "unit",
-                  sudah_ambil: true,
-                  sudah_kembali: false,
-                },
-              });
-            }
-          } else if (!existingItem) {
-            // For new items, create detail records
-            for (const serial of serialsToProcess) {
-              await tx.peminjamanSaranaDetail.create({
-                data: {
-                  peminjamanSaranaId,
-                  nama_barang: serial || `Item Tanpa Serial`,
-                  satuan: "unit",
-                  sudah_ambil: true,
-                  sudah_kembali: false,
-                },
-              });
-            }
+          // Create detail records for tracking
+          for (const serial of serialsToProcess) {
+            await tx.peminjamanSaranaDetail.create({
+              data: {
+                peminjamanSaranaId,
+                nama_barang: serial || `Item Tanpa Serial`,
+                satuan: "unit",
+                sudah_ambil: true,
+                sudah_kembali: false,
+              },
+            });
           }
         }
 
-        // Update sarana stock for TIDAK_BERNOMOR items (only if not already picked up)
-        if ((existingItem && !existingItem.sudah_ambil) || !existingItem) {
+        // Update sarana stock for TIDAK_BERNOMOR items - check if already processed to prevent duplication
+        if (existingItem && !existingItem.sudah_dipinjam) {
+          const sarana = await tx.sarana.findUnique({
+            where: { id: item.saranaId },
+            select: { jenis: true, sisa: true }
+          });
+
+          if (sarana?.jenis === "TIDAK_BERNOMOR") {
+            await tx.sarana.update({
+              where: { id: item.saranaId },
+              data: {
+                sisa: Math.max(0, sarana.sisa - item.jumlah),
+              },
+            });
+          }
+        } else if (!existingItem) {
+          // For new additional items
           const sarana = await tx.sarana.findUnique({
             where: { id: item.saranaId },
             select: { jenis: true, sisa: true }
@@ -962,17 +961,19 @@ export const updateReturnChecklist = async (
   }
 
   return await prisma.$transaction(async (tx) => {
-    // Update prasarana return checklist
+    // Update prasarana return checklist - prevent duplicate updates
     if (checklist.prasaranaIds?.length) {
-      await tx.peminjamanPrasarana.updateMany({
-        where: {
-          peminjamanId,
-          prasaranaId: { in: checklist.prasaranaIds },
-        },
-        data: {
-          sudah_kembali: true,
-        },
-      });
+      for (const prasaranaId of checklist.prasaranaIds) {
+        await tx.peminjamanPrasarana.updateMany({
+          where: {
+            peminjamanId,
+            prasaranaId,
+          },
+          data: {
+            sudah_kembali: true,
+          },
+        });
+      }
     }
 
     // Update sarana return checklist
@@ -987,11 +988,21 @@ export const updateReturnChecklist = async (
           throw new Error(`Sarana dengan ID ${item.saranaId} tidak ditemukan`);
         }
 
-        // Update PeminjamanSarana
-        await tx.peminjamanSarana.updateMany({
+        // Update PeminjamanSarana - find specific record to prevent duplicates
+        const peminjamanSarana = await tx.peminjamanSarana.findFirst({
           where: {
             peminjamanId,
             saranaId: item.saranaId,
+          },
+        });
+
+        if (!peminjamanSarana) {
+          throw new Error(`PeminjamanSarana dengan ID ${item.saranaId} tidak ditemukan`);
+        }
+
+        await tx.peminjamanSarana.update({
+          where: {
+            id: peminjamanSarana.id,
           },
           data: {
             sudah_kembali: true,

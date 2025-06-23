@@ -150,43 +150,55 @@ export function PanduanContent() {
 
   return (
     <Tabs defaultValue="peminjaman" className="w-full">
-      <TabsList className="grid w-full grid-cols-4">
-        <TabsTrigger value="peminjaman">Langkah Peminjaman</TabsTrigger>
-        <TabsTrigger value="marking">Tentang Marking</TabsTrigger>
-        <TabsTrigger value="templates">Template & Dokumen</TabsTrigger>
-        <TabsTrigger value="kontak">Informasi Kontak</TabsTrigger>
+      <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 h-auto">
+        <TabsTrigger value="peminjaman" className="text-xs sm:text-sm px-2 sm:px-4 py-2">
+          <span className="hidden sm:inline">Langkah Peminjaman</span>
+          <span className="sm:hidden">Peminjaman</span>
+        </TabsTrigger>
+        <TabsTrigger value="marking" className="text-xs sm:text-sm px-2 sm:px-4 py-2">
+          <span className="hidden sm:inline">Tentang Marking</span>
+          <span className="sm:hidden">Marking</span>
+        </TabsTrigger>
+        <TabsTrigger value="templates" className="text-xs sm:text-sm px-2 sm:px-4 py-2">
+          <span className="hidden sm:inline">Template & Dokumen</span>
+          <span className="sm:hidden">Template</span>
+        </TabsTrigger>
+        <TabsTrigger value="kontak" className="text-xs sm:text-sm px-2 sm:px-4 py-2">
+          <span className="hidden sm:inline">Informasi Kontak</span>
+          <span className="sm:hidden">Kontak</span>
+        </TabsTrigger>
       </TabsList>
 
-      <TabsContent value="peminjaman" className="space-y-6">
+      <TabsContent value="peminjaman" className="space-y-4 sm:space-y-6">
         <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <FileText className="w-5 h-5" />
+          <CardHeader className="pb-3 sm:pb-6">
+            <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
+              <FileText className="w-4 h-4 sm:w-5 sm:h-5" />
               Alur Proses Peminjaman Sarana Prasarana
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-gray-600 mb-6">
+            <p className="text-gray-600 mb-4 sm:mb-6 text-sm sm:text-base">
               Berikut adalah langkah-langkah untuk melakukan peminjaman sarana dan prasarana:
             </p>
-            <div className="space-y-6">
+            <div className="space-y-4 sm:space-y-6">
               {stepsPeminjaman.map((step, index) => (
                 <div key={step.step} className="relative">
                   {index < stepsPeminjaman.length - 1 && (
-                    <div className="absolute left-6 top-12 w-0.5 h-16 bg-gray-200" />
+                    <div className="absolute left-4 sm:left-6 top-10 sm:top-12 w-0.5 h-12 sm:h-16 bg-gray-200" />
                   )}
                   
-                  <div className="flex gap-4">
+                  <div className="flex gap-3 sm:gap-4">
                     <div className="flex-shrink-0">
-                      <div className="w-12 h-12 bg-primary text-white rounded-full flex items-center justify-center font-bold">
+                      <div className="w-8 h-8 sm:w-12 sm:h-12 bg-primary text-white rounded-full flex items-center justify-center font-bold text-sm sm:text-base">
                         {step.step}
                       </div>
                     </div>
                     
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-2">
-                        <h3 className="text-lg font-semibold">{step.title}</h3>
-                        <Badge className={getStatusColor(step.status)}>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-2">
+                        <h3 className="text-base sm:text-lg font-semibold">{step.title}</h3>
+                        <Badge className={`${getStatusColor(step.status)} w-fit text-xs`}>
                           {getStatusIcon(step.status)}
                           <span className="ml-1">
                             {step.status === 'required' && 'Wajib'}
@@ -197,13 +209,13 @@ export function PanduanContent() {
                         </Badge>
                       </div>
                       
-                      <p className="text-gray-600 mb-3">{step.description}</p>
+                      <p className="text-gray-600 mb-3 text-sm sm:text-base">{step.description}</p>
                       
-                      <ul className="space-y-1">
+                      <ul className="space-y-1 sm:space-y-2">
                         {step.details.map((detail, idx) => (
-                          <li key={idx} className="flex items-start gap-2 text-sm text-gray-700">
-                            <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
-                            {detail}
+                          <li key={idx} className="flex items-start gap-2 text-xs sm:text-sm text-gray-700">
+                            <CheckCircle className="w-3 h-3 sm:w-4 sm:h-4 text-green-500 mt-0.5 flex-shrink-0" />
+                            <span className="leading-relaxed">{detail}</span>
                           </li>
                         ))}
                       </ul>
@@ -216,67 +228,67 @@ export function PanduanContent() {
         </Card>
       </TabsContent>
 
-      <TabsContent value="marking" className="space-y-6">
+      <TabsContent value="marking" className="space-y-4 sm:space-y-6">
         <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <MapPin className="w-5 h-5" />
+          <CardHeader className="pb-3 sm:pb-6">
+            <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
+              <MapPin className="w-4 h-4 sm:w-5 sm:h-5" />
               Apa itu Marking?
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <p className="text-gray-700">
+            <p className="text-gray-700 text-sm sm:text-base">
               Marking adalah fitur untuk memberitahu rencana acara dan kebutuhan sarana prasarana Anda. 
               Ini membantu koordinasi dan perencanaan yang lebih baik di lingkungan kampus.
             </p>
             
-            <div className="grid md:grid-cols-2 gap-6">
+            <div className="grid gap-4 sm:gap-6 md:grid-cols-2">
               <div>
-                <h4 className="font-semibold text-green-700 mb-3 flex items-center gap-2">
-                  <CheckCircle className="w-5 h-5" />
+                <h4 className="font-semibold text-green-700 mb-3 flex items-center gap-2 text-sm sm:text-base">
+                  <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5" />
                   Kegunaan Marking
                 </h4>
-                <ul className="space-y-2 text-sm">
+                <ul className="space-y-2 text-xs sm:text-sm">
                   <li className="flex gap-2">
-                    <Calendar className="w-4 h-4 text-blue-500 mt-0.5" />
-                    Memberitahu jadwal acara yang direncanakan
+                    <Calendar className="w-3 h-3 sm:w-4 sm:h-4 text-blue-500 mt-0.5 flex-shrink-0" />
+                    <span>Memberitahu jadwal acara yang direncanakan</span>
                   </li>
                   <li className="flex gap-2">
-                    <Package className="w-4 h-4 text-blue-500 mt-0.5" />
-                    Menginformasikan kebutuhan sarana prasarana
+                    <Package className="w-3 h-3 sm:w-4 sm:h-4 text-blue-500 mt-0.5 flex-shrink-0" />
+                    <span>Menginformasikan kebutuhan sarana prasarana</span>
                   </li>
                   <li className="flex gap-2">
-                    <Users className="w-4 h-4 text-blue-500 mt-0.5" />
-                    Membantu koordinasi antar pengguna
+                    <Users className="w-3 h-3 sm:w-4 sm:h-4 text-blue-500 mt-0.5 flex-shrink-0" />
+                    <span>Membantu koordinasi antar pengguna</span>
                   </li>
                   <li className="flex gap-2">
-                    <AlertCircle className="w-4 h-4 text-blue-500 mt-0.5" />
-                    Menghindari bentrok jadwal
+                    <AlertCircle className="w-3 h-3 sm:w-4 sm:h-4 text-blue-500 mt-0.5 flex-shrink-0" />
+                    <span>Menghindari bentrok jadwal</span>
                   </li>
                 </ul>
               </div>
               
               <div>
-                <h4 className="font-semibold text-amber-700 mb-3 flex items-center gap-2">
-                  <AlertCircle className="w-5 h-5" />
+                <h4 className="font-semibold text-amber-700 mb-3 flex items-center gap-2 text-sm sm:text-base">
+                  <AlertCircle className="w-4 h-4 sm:w-5 sm:h-5" />
                   Penting Diketahui
                 </h4>
-                <ul className="space-y-2 text-sm">
+                <ul className="space-y-2 text-xs sm:text-sm">
                   <li className="flex gap-2">
-                    <span className="w-2 h-2 bg-amber-500 rounded-full mt-2" />
-                    Marking bersifat informatif, bukan pemesanan
+                    <span className="w-2 h-2 bg-amber-500 rounded-full mt-1.5 flex-shrink-0" />
+                    <span>Marking bersifat informatif, bukan pemesanan</span>
                   </li>
                   <li className="flex gap-2">
-                    <span className="w-2 h-2 bg-amber-500 rounded-full mt-2" />
-                    Tidak menjamin ketersediaan sarpras
+                    <span className="w-2 h-2 bg-amber-500 rounded-full mt-1.5 flex-shrink-0" />
+                    <span>Tidak menjamin ketersediaan sarpras</span>
                   </li>
                   <li className="flex gap-2">
-                    <span className="w-2 h-2 bg-amber-500 rounded-full mt-2" />
-                    Tetap harus mengajukan peminjaman resmi
+                    <span className="w-2 h-2 bg-amber-500 rounded-full mt-1.5 flex-shrink-0" />
+                    <span>Tetap harus mengajukan peminjaman resmi</span>
                   </li>
                   <li className="flex gap-2">
-                    <span className="w-2 h-2 bg-amber-500 rounded-full mt-2" />
-                    Bisa diubah atau dibatalkan kapan saja
+                    <span className="w-2 h-2 bg-amber-500 rounded-full mt-1.5 flex-shrink-0" />
+                    <span>Bisa diubah atau dibatalkan kapan saja</span>
                   </li>
                 </ul>
               </div>
@@ -285,11 +297,11 @@ export function PanduanContent() {
         </Card>
       </TabsContent>
 
-      <TabsContent value="templates" className="space-y-6">
+      <TabsContent value="templates" className="space-y-4 sm:space-y-6">
         <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Download className="w-5 h-5" />
+          <CardHeader className="pb-3 sm:pb-6">
+            <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
+              <Download className="w-4 h-4 sm:w-5 sm:h-5" />
               Template & Dokumen
             </CardTitle>
           </CardHeader>
@@ -301,25 +313,25 @@ export function PanduanContent() {
             ) : (
               <div className="space-y-4">
                 {templates.template_form_peminjaman && (
-                  <div className="border rounded-lg p-4">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <FileText className="w-8 h-8 text-blue-500" />
-                        <div>
-                          <h4 className="font-medium">Template Form Peminjaman</h4>
-                          <p className="text-sm text-gray-600">
+                  <div className="border rounded-lg p-3 sm:p-4">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                      <div className="flex items-start sm:items-center gap-3">
+                        <FileText className="w-6 h-6 sm:w-8 sm:h-8 text-blue-500 flex-shrink-0 mt-1 sm:mt-0" />
+                        <div className="min-w-0">
+                          <h4 className="font-medium text-sm sm:text-base">Template Form Peminjaman</h4>
+                          <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
                             Format form peminjaman yang harus diisi saat mengajukan peminjaman
                           </p>
                         </div>
                       </div>
-                      <Button asChild variant="outline">
+                      <Button asChild variant="outline" size="sm" className="self-start sm:self-auto shrink-0">
                         <a 
                           href={templates.template_form_peminjaman} 
                           target="_blank" 
                           rel="noopener noreferrer"
                         >
-                          <ExternalLink className="w-4 h-4 mr-2" />
-                          Lihat Template
+                          <ExternalLink className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+                          <span className="text-xs sm:text-sm">Lihat Template</span>
                         </a>
                       </Button>
                     </div>
@@ -327,25 +339,25 @@ export function PanduanContent() {
                 )}
 
                 {templates.template_surat_pengajuan && (
-                  <div className="border rounded-lg p-4">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <FileText className="w-8 h-8 text-green-500" />
-                        <div>
-                          <h4 className="font-medium">Template Surat Pengajuan</h4>
-                          <p className="text-sm text-gray-600">
+                  <div className="border rounded-lg p-3 sm:p-4">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                      <div className="flex items-start sm:items-center gap-3">
+                        <FileText className="w-6 h-6 sm:w-8 sm:h-8 text-green-500 flex-shrink-0 mt-1 sm:mt-0" />
+                        <div className="min-w-0">
+                          <h4 className="font-medium text-sm sm:text-base">Template Surat Pengajuan</h4>
+                          <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
                             Template surat resmi yang harus dilampirkan saat peminjaman
                           </p>
                         </div>
                       </div>
-                      <Button asChild variant="outline">
+                      <Button asChild variant="outline" size="sm" className="self-start sm:self-auto shrink-0">
                         <a 
                           href={templates.template_surat_pengajuan} 
                           target="_blank" 
                           rel="noopener noreferrer"
                         >
-                          <ExternalLink className="w-4 h-4 mr-2" />
-                          Download Template
+                          <ExternalLink className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+                          <span className="text-xs sm:text-sm">Download Template</span>
                         </a>
                       </Button>
                     </div>
@@ -353,25 +365,25 @@ export function PanduanContent() {
                 )}
 
                 {settings.url_file_form_peminjaman && (
-                  <div className="border rounded-lg p-4">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <Download className="w-8 h-8 text-purple-500" />
-                        <div>
-                          <h4 className="font-medium">File Form Peminjaman</h4>
-                          <p className="text-sm text-gray-600">
+                  <div className="border rounded-lg p-3 sm:p-4">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                      <div className="flex items-start sm:items-center gap-3">
+                        <Download className="w-6 h-6 sm:w-8 sm:h-8 text-purple-500 flex-shrink-0 mt-1 sm:mt-0" />
+                        <div className="min-w-0">
+                          <h4 className="font-medium text-sm sm:text-base">File Form Peminjaman</h4>
+                          <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
                             File form peminjaman yang dapat diunduh
                           </p>
                         </div>
                       </div>
-                      <Button asChild variant="outline">
+                      <Button asChild variant="outline" size="sm" className="self-start sm:self-auto shrink-0">
                         <a 
                           href={settings.url_file_form_peminjaman} 
                           target="_blank" 
                           rel="noopener noreferrer"
                         >
-                          <Download className="w-4 h-4 mr-2" />
-                          Download File
+                          <Download className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+                          <span className="text-xs sm:text-sm">Download File</span>
                         </a>
                       </Button>
                     </div>
@@ -379,25 +391,25 @@ export function PanduanContent() {
                 )}
 
                 {settings.url_form_peminjaman && (
-                  <div className="border rounded-lg p-4">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <ExternalLink className="w-8 h-8 text-orange-500" />
-                        <div>
-                          <h4 className="font-medium">Form Peminjaman Online</h4>
-                          <p className="text-sm text-gray-600">
+                  <div className="border rounded-lg p-3 sm:p-4">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                      <div className="flex items-start sm:items-center gap-3">
+                        <ExternalLink className="w-6 h-6 sm:w-8 sm:h-8 text-orange-500 flex-shrink-0 mt-1 sm:mt-0" />
+                        <div className="min-w-0">
+                          <h4 className="font-medium text-sm sm:text-base">Form Peminjaman Online</h4>
+                          <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
                             Form peminjaman online yang dapat diisi langsung
                           </p>
                         </div>
                       </div>
-                      <Button asChild variant="outline">
+                      <Button asChild variant="outline" size="sm" className="self-start sm:self-auto shrink-0">
                         <a 
                           href={settings.url_form_peminjaman} 
                           target="_blank" 
                           rel="noopener noreferrer"
                         >
-                          <ExternalLink className="w-4 h-4 mr-2" />
-                          Buka Form
+                          <ExternalLink className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+                          <span className="text-xs sm:text-sm">Buka Form</span>
                         </a>
                       </Button>
                     </div>
@@ -409,8 +421,8 @@ export function PanduanContent() {
                  !settings.url_file_form_peminjaman && 
                  !settings.url_form_peminjaman && (
                   <div className="text-center py-8 text-gray-500">
-                    <FileText className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                    <p>Template belum tersedia. Silakan hubungi admin.</p>
+                    <FileText className="w-8 h-8 sm:w-12 sm:h-12 mx-auto mb-4 opacity-50" />
+                    <p className="text-sm sm:text-base">Template belum tersedia. Silakan hubungi admin.</p>
                   </div>
                 )}
               </div>
@@ -419,11 +431,11 @@ export function PanduanContent() {
         </Card>
       </TabsContent>
 
-      <TabsContent value="kontak" className="space-y-6">
+      <TabsContent value="kontak" className="space-y-4 sm:space-y-6">
         <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Phone className="w-5 h-5" />
+          <CardHeader className="pb-3 sm:pb-6">
+            <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
+              <Phone className="w-4 h-4 sm:w-5 sm:h-5" />
               Informasi Kontak Admin
             </CardTitle>
           </CardHeader>
@@ -435,37 +447,37 @@ export function PanduanContent() {
             ) : (
               <div className="space-y-4">
                 {settings.nomer_handphone_admin && (
-                  <div className="border rounded-lg p-4">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <Phone className="w-8 h-8 text-green-500" />
-                        <div>
-                          <h4 className="font-medium">Nomor Handphone Admin</h4>
-                          <p className="text-sm text-gray-600">
+                  <div className="border rounded-lg p-3 sm:p-4">
+                    <div className="flex flex-col gap-3">
+                      <div className="flex items-start gap-3">
+                        <Phone className="w-6 h-6 sm:w-8 sm:h-8 text-green-500 flex-shrink-0 mt-1" />
+                        <div className="min-w-0 flex-1">
+                          <h4 className="font-medium text-sm sm:text-base">Nomor Handphone Admin</h4>
+                          <p className="text-xs sm:text-sm text-gray-600 mb-2">
                             Hubungi admin untuk informasi lebih lanjut
                           </p>
-                          <p className="text-lg font-mono text-gray-800 mt-1">
+                          <p className="text-base sm:text-lg font-mono text-gray-800 break-all">
                             {settings.nomer_handphone_admin}
                           </p>
                         </div>
                       </div>
-                      <div className="flex gap-2">
-                        <Button asChild variant="outline" size="sm">
+                      <div className="flex flex-col sm:flex-row gap-2">
+                        <Button asChild variant="outline" size="sm" className="w-full sm:w-auto">
                           <a 
                             href={`tel:${settings.nomer_handphone_admin}`}
                           >
-                            <Phone className="w-4 h-4 mr-2" />
-                            Telepon
+                            <Phone className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+                            <span className="text-xs sm:text-sm">Telepon</span>
                           </a>
                         </Button>
-                        <Button asChild variant="outline" size="sm">
+                        <Button asChild variant="outline" size="sm" className="w-full sm:w-auto">
                           <a 
                             href={`https://wa.me/${settings.nomer_handphone_admin.replace(/\D/g, '')}`}
                             target="_blank"
                             rel="noopener noreferrer"
                           >
-                            <MessageCircle className="w-4 h-4 mr-2" />
-                            WhatsApp
+                            <MessageCircle className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+                            <span className="text-xs sm:text-sm">WhatsApp</span>
                           </a>
                         </Button>
                       </div>
@@ -473,9 +485,9 @@ export function PanduanContent() {
                   </div>
                 )}
 
-                <div className="border rounded-lg p-4 bg-blue-50">
-                  <h4 className="font-medium text-blue-800 mb-2">Informasi Penting</h4>
-                  <ul className="text-sm text-blue-700 space-y-1">
+                <div className="border rounded-lg p-3 sm:p-4 bg-blue-50">
+                  <h4 className="font-medium text-blue-800 mb-2 text-sm sm:text-base">Informasi Penting</h4>
+                  <ul className="text-xs sm:text-sm text-blue-700 space-y-1">
                     <li>• Hubungi admin untuk konsultasi sebelum mengajukan peminjaman</li>
                     <li>• Admin tersedia pada jam kerja (08:00 - 16:00 WIB)</li>
                     <li>• Untuk hal mendesak, silakan gunakan WhatsApp</li>
@@ -485,8 +497,8 @@ export function PanduanContent() {
 
                 {!settings.nomer_handphone_admin && (
                   <div className="text-center py-8 text-gray-500">
-                    <Phone className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                    <p>Informasi kontak belum tersedia. Silakan hubungi admin melalui sistem.</p>
+                    <Phone className="w-8 h-8 sm:w-12 sm:h-12 mx-auto mb-4 opacity-50" />
+                    <p className="text-sm sm:text-base">Informasi kontak belum tersedia. Silakan hubungi admin melalui sistem.</p>
                   </div>
                 )}
               </div>

@@ -22,7 +22,6 @@ export class OrmawaService {
         data: ormawa
       };
     } catch (error) {
-      console.error("Error fetching ormawa:", error);
       return {
         success: false,
         message: "Failed to fetch ormawa",

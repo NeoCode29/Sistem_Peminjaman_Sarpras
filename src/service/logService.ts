@@ -46,7 +46,7 @@ export async function logActivity({
       },
     });
   } catch {
-    console.error("Error creating log entry");
+    // Silently handle log creation errors
   }
 }
 
@@ -151,7 +151,7 @@ export async function logAuthActivity(
  */
 export async function logDashboardActivity(
   userId: string,
-  action: 'VIEW_STATS' | 'VIEW_CALENDAR' | 'EXPORT_REPORT',
+  action: 'VIEW_STATS' | 'VIEW_CALENDAR' | 'VIEW_MARKING' | 'EXPORT_REPORT',
   details?: string
 ): Promise<void> {
   await logActivity({
@@ -222,6 +222,7 @@ function getActionDescription(action: string): string {
     'VIEW_USER': 'Melihat Data User',
     'VIEW_STATS': 'Melihat Statistik',
     'VIEW_CALENDAR': 'Melihat Kalender',
+    'VIEW_MARKING': 'Melihat Marking',
     'EXPORT_REPORT': 'Export Laporan',
     'UPLOAD': 'Upload File',
   };
@@ -297,7 +298,6 @@ export async function getLogs(params: {
       }
     };
   } catch {
-    console.error("Error getting logs");
     return { success: false, message: "Gagal mengambil log" };
   }
 }

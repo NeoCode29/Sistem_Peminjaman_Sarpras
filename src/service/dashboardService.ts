@@ -189,7 +189,6 @@ export const getDashboardStats = async (): Promise<DashboardStats> => {
       totalKapasitasPrasarana
     };
   } catch (error) {
-    console.error("Error fetching dashboard stats:", error);
     throw new Error("Failed to fetch dashboard statistics");
   }
 };
@@ -200,7 +199,8 @@ export const getCalendarEvents = async (
   limit: number = 100
 ): Promise<CalendarEvent[]> => {
   try {
-    const events = await prisma.peminjaman.findMany({
+    // Fetch peminjaman events
+    const peminjamanEvents = await prisma.peminjaman.findMany({
       where: {
         OR: [
           {
@@ -260,9 +260,77 @@ export const getCalendarEvents = async (
       take: limit,
     });
 
-    return events;
+    // Fetch marking events
+    const markingEvents = await prisma.marking.findMany({
+      where: {
+        OR: [
+          {
+            AND: [
+              { tanggal_acara_dimulai: { gte: startDate } },
+              { tanggal_acara_dimulai: { lte: endDate } }
+            ]
+          },
+          {
+            AND: [
+              { tanggal_acara_berakhir: { gte: startDate } },
+              { tanggal_acara_berakhir: { lte: endDate } }
+            ]
+          },
+          {
+            AND: [
+              { tanggal_acara_dimulai: { lte: startDate } },
+              { tanggal_acara_berakhir: { gte: endDate } }
+            ]
+          }
+        ]
+      },
+      include: {
+        user: {
+          select: {
+            name: true,
+            email: true,
+          },
+        },
+        ormawa: {
+          select: {
+            nama: true,
+          },
+        },
+      },
+      orderBy: {
+        tanggal_acara_dimulai: "asc",
+      },
+      take: limit,
+    });
+
+    // Combine and format events
+    const allEvents: CalendarEvent[] = [
+      ...peminjamanEvents,
+      ...markingEvents.map(marking => ({
+        id: marking.id,
+        nama_acara: marking.nama_acara,
+        tanggal_acara_dimulai: marking.tanggal_acara_dimulai,
+        tanggal_acara_berakhir: marking.tanggal_acara_berakhir,
+        jumlah_peserta: marking.jumlah_peserta,
+        status_peminjaman: marking.status as any, // Convert MarkingStatus to StatusPeminjaman
+        status_pengajuan: marking.status as any, // Use marking status for both
+        unit_pegawai: marking.unit_pegawai,
+        user: marking.user,
+        ormawa: marking.ormawa,
+        peminjamanSarana: [], // Marking doesn't have sarana
+        peminjamanPrasarana: [], // Marking doesn't have prasarana
+      }))
+    ];
+
+    // Sort by date
+    allEvents.sort((a, b) => {
+      const dateA = a.tanggal_acara_dimulai ? new Date(a.tanggal_acara_dimulai) : new Date(0);
+      const dateB = b.tanggal_acara_dimulai ? new Date(b.tanggal_acara_dimulai) : new Date(0);
+      return dateA.getTime() - dateB.getTime();
+    });
+
+    return allEvents.slice(0, limit);
   } catch (error) {
-    console.error("Error fetching calendar events:", error);
     throw new Error("Failed to fetch calendar events");
   }
 };

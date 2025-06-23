@@ -15,21 +15,28 @@ export default async function DaftarSarprasPage() {
   }
 
   return (
-    <div className="container mx-auto p-6 max-w-6xl">
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold text-gray-900">Daftar Sarana Prasarana</h1>
-        <p className="text-gray-600 mt-2">
-          Lihat ketersediaan sarana dan prasarana berdasarkan tanggal yang Anda pilih.
-        </p>
-      </div>
-      
-      <Suspense fallback={
-        <div className="flex items-center justify-center h-64">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+    <div className="min-h-screen bg-gray-50">
+      {/* Content Header - Following Design System Pattern */}
+      <div className="bg-white border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-6 py-6">
+          {/* Title */}
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">Daftar Sarana Prasarana</h1>
+          <p className="text-gray-600">
+            Lihat ketersediaan sarana dan prasarana berdasarkan tanggal yang Anda pilih.
+          </p>
         </div>
-      }>
-        <ImprovedDaftarSarpras />
-      </Suspense>
+      </div>
+
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto px-6 py-6">
+        <Suspense fallback={
+          <div className="flex items-center justify-center h-64">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+          </div>
+        }>
+          <ImprovedDaftarSarpras />
+        </Suspense>
+      </div>
     </div>
   );
 } 

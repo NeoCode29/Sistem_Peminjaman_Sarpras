@@ -190,6 +190,8 @@ export function PickupChecklistDialog({
   };
 
     const handleSubmit = async () => {
+    if (isSubmitting) return; // Prevent double submission
+    
     setIsSubmitting(true);
     try {
       const saranaItemsData = saranaItems
@@ -345,7 +347,7 @@ export function PickupChecklistDialog({
                             <Select
                               value=""
                               onValueChange={(value) => {
-                                console.log('Select onChange triggered with value:', value);
+                        
                                 if (value && value !== 'no-data' && value !== 'all-selected') {
                                   handleAddSerial(item.id, value);
                                 }
@@ -361,9 +363,7 @@ export function PickupChecklistDialog({
                               </SelectTrigger>
                               <SelectContent>
                                 {(() => {
-                                  console.log('=== SELECT CONTENT RENDER ===');
-                                  console.log('saranaData:', saranaData);
-                                  console.log('item:', item);
+                                  
                                   
                                   // Try multiple ways to get detail sarana
                                   let detailSarana = [];
@@ -372,16 +372,12 @@ export function PickupChecklistDialog({
                                     // For additional items, get from availableSarana
                                     const foundSarana = availableSarana.find(s => s.id === item.saranaId);
                                     detailSarana = foundSarana?.detailSarana || [];
-                                    console.log('Additional item - foundSarana:', foundSarana);
+
                                   } else {
                                     // For original items, get from peminjaman data
                                     const peminjamanSaranaItem = peminjaman.peminjamanSarana.find(ps => ps.saranaId === item.saranaId);
                                     detailSarana = peminjamanSaranaItem?.sarana?.detailSarana || [];
-                                    console.log('Original item - peminjamanSaranaItem:', peminjamanSaranaItem);
-                                    console.log('Original item - sarana:', peminjamanSaranaItem?.sarana);
-                                  }
-                                  
-                                  console.log('Final detailSarana:', detailSarana);
+                                                                        }
                                   
                                   if (!detailSarana || detailSarana.length === 0) {
                                     return [
@@ -396,11 +392,8 @@ export function PickupChecklistDialog({
                                     const serialValue = detail.nomer_seri || detail.id;
                                     const isNotSelected = !item.selectedSerials.includes(serialValue);
                                     const isAvailable = detail.status === "TERSEDIA";
-                                    console.log(`Checking serial ${serialValue}:`, { isNotSelected, isAvailable, status: detail.status });
                                     return isNotSelected && isAvailable;
                                   });
-                                  
-                                  console.log('Final availableSerials:', availableSerials);
                                   
                                   if (availableSerials.length === 0) {
                                     const allSerials = detailSarana.map(d => `${d.nomer_seri || d.id} (${d.status})`).join(', ');

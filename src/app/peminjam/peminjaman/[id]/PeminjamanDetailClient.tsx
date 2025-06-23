@@ -301,7 +301,7 @@ export default function PeminjamanDetailClient({ peminjamanId }: PeminjamanDetai
   }
 
   return (
-    <div className="container py-6 max-w-6xl">
+    <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 max-w-6xl">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <Button
@@ -396,7 +396,7 @@ export default function PeminjamanDetailClient({ peminjamanId }: PeminjamanDetai
                 Timeline Peminjaman
               </CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-4 sm:p-6">
               <div className="space-y-6">
                 {getTimelineSteps().map((step, index) => (
                   <div key={step.id} className="flex gap-4">
@@ -464,7 +464,7 @@ export default function PeminjamanDetailClient({ peminjamanId }: PeminjamanDetai
               <CardHeader>
                 <CardTitle>Konfirmasi Pengambilan</CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-4 sm:p-6">
                 <p className="text-muted-foreground mb-4">
                   Silakan konfirmasi pengambilan barang setelah Anda mengambil semua item yang dipinjam.
                 </p>
@@ -481,7 +481,7 @@ export default function PeminjamanDetailClient({ peminjamanId }: PeminjamanDetai
               <CardHeader>
                 <CardTitle>Konfirmasi Pengembalian</CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-4 sm:p-6">
                 <p className="text-muted-foreground mb-4">
                   Silakan konfirmasi pengembalian barang setelah Anda mengembalikan semua item yang dipinjam.
                   Anda dapat melakukan checklist pengembalian kapan saja setelah mengambil barang.
@@ -502,7 +502,7 @@ export default function PeminjamanDetailClient({ peminjamanId }: PeminjamanDetai
                 Item yang Dipinjam
               </CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-4 sm:p-6">
               <Tabs defaultValue="sarana" className="w-full">
                 <TabsList className="grid w-full grid-cols-2">
                   <TabsTrigger value="sarana">
@@ -676,7 +676,7 @@ export default function PeminjamanDetailClient({ peminjamanId }: PeminjamanDetai
                 Informasi Acara
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-4 p-4 sm:p-6">
               <div>
                 <p className="text-sm font-medium text-muted-foreground">Tanggal Mulai</p>
                 <p className="font-medium">{formatDate(peminjaman.tanggal_acara_dimulai)}</p>
@@ -706,7 +706,7 @@ export default function PeminjamanDetailClient({ peminjamanId }: PeminjamanDetai
                   Organisasi
                 </CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-4 sm:p-6">
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">Nama Organisasi/UKM</p>
                   <p className="font-medium">{peminjaman.ormawa.nama}</p>
@@ -723,7 +723,7 @@ export default function PeminjamanDetailClient({ peminjamanId }: PeminjamanDetai
                 Jadwal Penting
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-4 p-4 sm:p-6">
               <div>
                 <p className="text-sm font-medium text-muted-foreground">Tanggal Pengajuan</p>
                 <p className="font-medium">{formatDate(peminjaman.tanggal_pengajuan)}</p>
@@ -750,7 +750,7 @@ export default function PeminjamanDetailClient({ peminjamanId }: PeminjamanDetai
                   Pesan Admin
                 </CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-4 sm:p-6">
                 <p className="text-sm text-red-700">{peminjaman.massage_admin}</p>
                 {(peminjaman.status_pengajuan === "PENGAJUAN_DITOLAK" && canEdit) && (
                   <div className="mt-3">

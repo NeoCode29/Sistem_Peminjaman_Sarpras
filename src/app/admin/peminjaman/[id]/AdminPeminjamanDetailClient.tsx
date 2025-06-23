@@ -281,7 +281,7 @@ export default function AdminPeminjamanDetailClient({ adminId, peminjamanId }: A
   };
 
   return (
-    <div className="container mx-auto py-6 space-y-6">
+    <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div className="flex items-center gap-3">
@@ -316,7 +316,7 @@ export default function AdminPeminjamanDetailClient({ adminId, peminjamanId }: A
                 Informasi Acara
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-4 p-4 sm:p-6">
               <div>
                 <h3 className="font-semibold text-lg mb-2">{peminjaman.nama_acara}</h3>
                 <p className="text-muted-foreground">{peminjaman.deskripsi_acara}</p>
@@ -400,7 +400,7 @@ export default function AdminPeminjamanDetailClient({ adminId, peminjamanId }: A
                 Daftar Sarpras
               </CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-4 sm:p-6">
               <Tabs defaultValue="sarana" className="w-full">
                 <TabsList className="grid w-full grid-cols-2">
                   <TabsTrigger value="sarana">
@@ -566,7 +566,7 @@ export default function AdminPeminjamanDetailClient({ adminId, peminjamanId }: A
                 Timeline Peminjaman
               </CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-4 sm:p-6">
               <div className="space-y-6">
                 {getTimelineSteps().map((step, index) => (
                   <div key={step.id} className="flex items-start gap-4">
@@ -632,7 +632,7 @@ export default function AdminPeminjamanDetailClient({ adminId, peminjamanId }: A
                 Informasi Peminjam
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-4 p-4 sm:p-6">
               <div className="flex items-center gap-3">
                 <Avatar className="w-12 h-12">
                   <AvatarImage src={peminjaman.user.image} />
@@ -719,7 +719,7 @@ export default function AdminPeminjamanDetailClient({ adminId, peminjamanId }: A
                 Status Peminjaman
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-4 p-4 sm:p-6">
               <div>
                 <p className="text-sm font-medium mb-2">Status Pengajuan</p>
                 {getStatusPengajuanBadge(peminjaman.status_pengajuan)}
@@ -773,7 +773,7 @@ export default function AdminPeminjamanDetailClient({ adminId, peminjamanId }: A
                 Tanggal Penting
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-4 p-4 sm:p-6">
               <div>
                 <p className="text-sm font-medium">Tanggal Pengajuan</p>
                 <p className="text-sm text-muted-foreground">{formatDateTime(peminjaman.tanggal_pengajuan)}</p>
@@ -804,7 +804,7 @@ export default function AdminPeminjamanDetailClient({ adminId, peminjamanId }: A
                   Pesan Admin
                 </CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-4 sm:p-6">
                 <p className="text-sm text-red-700">{peminjaman.massage_admin}</p>
               </CardContent>
             </Card>

@@ -235,7 +235,7 @@ export async function updatePrasarana(
         image_url: true,
       },
     });
-    console.log("[updatePrasarana] Prasarana updated successfully:", prasarana);
+
 
     return {
       success: true,
@@ -244,7 +244,7 @@ export async function updatePrasarana(
     };
   } catch (error) {
     if (error instanceof z.ZodError) {
-      console.log("[updatePrasarana] Validation error:", error.errors);
+
       return {
         success: false,
         message: "Validasi gagal: " + error.errors.map(e => e.message).join(", "),

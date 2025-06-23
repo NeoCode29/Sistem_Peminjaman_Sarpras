@@ -175,6 +175,8 @@ export function ReturnChecklistDialog({
   };
 
   const handleSubmit = async () => {
+    if (isSubmitting) return; // Prevent double submission
+    
     setIsSubmitting(true);
     try {
       const checklist = {

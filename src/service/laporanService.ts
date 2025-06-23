@@ -142,7 +142,6 @@ export const getLaporanPeminjamanBulanan = async (
       })),
     }));
   } catch (error) {
-    console.error("Error fetching laporan peminjaman:", error);
     throw new Error("Failed to fetch laporan peminjaman");
   }
 }; 
